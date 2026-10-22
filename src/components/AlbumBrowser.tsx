@@ -4,19 +4,51 @@ import Link from "next/link";
 import { useState } from "react";
 import { groupBySeason } from "@/lib/format";
 import { MatchTitle } from "./MatchTitle";
+import type { PlayerCard } from "./PlayerBrowser";
 
 export type AlbumCard = { id: string; season: string | null; title: string; date: string; count: number; coverId: string | null };
 
-export function AlbumBrowser({ cards }: { cards: AlbumCard[] }) {
+export function AlbumBrowser({ cards, players }: { cards: AlbumCard[]; players: PlayerCard[] }) {
   const [q, setQ] = useState("");
   const needle = q.trim().toLowerCase();
   const shown = needle ? cards.filter((c) => `${c.title} ${c.season ?? ""}`.toLowerCase().includes(needle)) : cards;
+  const people = needle ? players.filter((p) => p.name.toLowerCase().includes(needle)) : players;
 
   return (
     <>
       <div className="search">
-        <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Spiel oder Gegner suchen …" aria-label="Spiele durchsuchen" />
+        <input
+          type="search"
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          placeholder={players.length ? "Spiel, Gegner oder Spielername …" : "Spiel oder Gegner suchen …"}
+          aria-label="Spiele und Spieler durchsuchen"
+        />
       </div>
+
+      {people.length > 0 && (
+        <section aria-labelledby="s-spieler">
+          <div className="section-row">
+            <h2 id="s-spieler" className="section">
+              Spieler
+            </h2>
+            <Link href="/spieler" className="more">
+              Alle Spieler ›
+            </Link>
+          </div>
+          <div className="strip">
+            {people.map((p) => (
+              <Link key={p.id} href={`/spieler/${p.id}`} className="strip-item">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={`/face/${p.id}`} alt="" loading="lazy" />
+                <span>{p.name}</span>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <div id="spiele" />
       {groupBySeason(shown).map((g) => (
         <section key={g.season} aria-labelledby={`s-${g.season}`}>
           <h2 id={`s-${g.season}`} className="section">
@@ -45,7 +77,7 @@ export function AlbumBrowser({ cards }: { cards: AlbumCard[] }) {
           </div>
         </section>
       ))}
-      {!shown.length && <p className="empty">Nichts gefunden.</p>}
+      {!shown.length && !people.length && <p className="empty">Nichts gefunden.</p>}
     </>
   );
 }

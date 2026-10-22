@@ -33,11 +33,19 @@ export function Gallery({ photos }: { photos: GalleryPhoto[] }) {
     <>
       <div className="grid">
         {photos.map((p, i) => (
-          <button key={p.id} className="tile" onClick={() => setOpen(i)} aria-label={`Foto ${i + 1} vergrössern`}>
+          <button
+            key={p.id}
+            className="tile"
+            // Blocksatz-Raster: jede Kachel wächst im Verhältnis ihres Seitenverhältnisses
+            style={{ "--ar": p.width && p.height ? p.width / p.height : 1.5 } as React.CSSProperties}
+            onClick={() => setOpen(i)}
+            aria-label={`Foto ${i + 1} vergrössern`}
+          >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={`/img/${p.id}/thumbnail`} alt="" loading="lazy" width={p.width} height={p.height} />
           </button>
         ))}
+        <span className="grid-fill" aria-hidden />
       </div>
 
       {current && (

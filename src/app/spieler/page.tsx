@@ -11,9 +11,7 @@ export default async function Players() {
     <>
       <section className="hero small">
         <p className="eyebrow">Spielerinnen und Spieler</p>
-        <h1>
-          Finde <em>dich.</em>
-        </h1>
+        <h1>Finde dich.</h1>
         <p className="lead">Klick auf dein Gesicht und sieh alle Fotos, auf denen du bist, aus allen Spielen.</p>
       </section>
       {people.length ? <PlayerBrowser players={people} /> : <p className="empty">Noch keine Spieler benannt.</p>}

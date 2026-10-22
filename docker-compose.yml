@@ -1,0 +1,21 @@
+# Foto-Website auf dem Hetzner-Server, liegt dort in ~/fotos-web/ zusammen mit .env (Vorlage: env.example).
+# Läuft neben dem Portal (~/unihockey) und Immich (~/fotos). Das HTTPS übernimmt der Caddy des Portals,
+# der diese Seite über das Netzwerk "web" erreicht (deploy.sh trägt die Domain dort ein).
+name: fotos-web
+
+services:
+  # Der Dienst heisst bewusst nicht "web": im Netzwerk "web" liegt sonst ein Namenskonflikt mit dem Portal
+  fotos-web:
+    image: ${IMAGE:-ghcr.io/floorba11/fotos-web:latest}
+    container_name: fotos_web
+    restart: unless-stopped
+    environment:
+      IMMICH_URL: http://immich-server:2283
+      IMMICH_API_KEY: ${IMMICH_API_KEY:?IMMICH_API_KEY fehlt in .env}
+      CONTACT_EMAIL: ${CONTACT_EMAIL:-}
+    networks: [web]
+    mem_limit: 256m
+
+networks:
+  web:
+    external: true

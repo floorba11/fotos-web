@@ -8,12 +8,18 @@ import "./globals.css";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: { default: "Luc Maradan · floorba11 Fotografie", template: "%s · floorba11 Fotografie" },
+  title: { default: "floorba11 · Luc Maradan Fotografie", template: "%s · floorba11 Fotografie" },
   description: "Spielfotos in voller Auflösung",
   robots: { index: false, follow: false, noarchive: true },
 };
 
-export const viewport: Viewport = { themeColor: "#fafaf8", colorScheme: "light" };
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#17181b" },
+  ],
+  colorScheme: "light dark",
+};
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const contact = process.env.CONTACT_EMAIL;
@@ -36,7 +42,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <main className="wrap">{children}</main>
         <footer className="foot">
           <div className="wrap">
-            <p className="foot-brand">© {new Date().getFullYear()} Luc Maradan · floorba11 Fotografie</p>
+            <p className="foot-brand">© {new Date().getFullYear()} floorba11 · Luc Maradan Fotografie</p>
             <p>Die Fotos sind nur für die Spielerinnen und Spieler gedacht. Bitte nicht öffentlich weiterverbreiten.</p>
             {contact && (
               <p>

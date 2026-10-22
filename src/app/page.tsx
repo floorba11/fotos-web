@@ -19,11 +19,7 @@ export default async function Home() {
     <>
       <section className="hero">
         <p className="eyebrow">Spielfotos</p>
-        <h1>
-          Deine Spiele.
-          <br />
-          <em>Deine Fotos.</em>
-        </h1>
+        <h1>Deine Spiele. Deine Fotos.</h1>
         <p className="lead">Such dein Spiel oder deinen Namen und lade die Bilder in voller Auflösung herunter.</p>
         {albums.length > 0 && (
           <p className="stats">

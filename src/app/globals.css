@@ -13,21 +13,6 @@
   color-scheme: light;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #0e0f11;
-    --surface: #17181b;
-    --surface-2: #1e2023;
-    --line: #2a2c30;
-    --line-strong: #3d4045;
-    --text: #f2f3f4;
-    --muted: #9a9ea6;
-    --ink: #f2f3f4;
-    --ink-text: #111111;
-    color-scheme: dark;
-  }
-}
-
 * {
   box-sizing: border-box;
 }

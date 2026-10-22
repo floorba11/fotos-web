@@ -10,7 +10,8 @@ Besucher → Caddy (Portal, ~/unihockey) → fotos_web:3000 → Immich-API (immi
 
 - **Spiele** (`/`): Alben nach Saison gruppiert, mit Suche. Album = Ordner auf der Storage Box (macht `album-sync`).
 - **Album** (`/album/<id>`): Fotoraster, Grossansicht (Pfeiltasten, Wischen), Original- und ZIP-Download.
-- **Spieler** (`/spieler`, `/spieler/<id>`): benannte Personen aus Immich, alle Fotos der Person, ZIP-Download.
+- **Spieler** (`/spieler`, `/spieler/<id>`): benannte Personen aus Immich, alle Fotos der Person (neueste zuerst), ZIP-Download.
+  Als Bild dient das Kaderporträt der Vereinsseite, sonst das Gesicht aus dem neusten Foto der Person.
 - Der API-Schlüssel bleibt auf dem Server. Der Browser spricht nur mit dieser Website, nie direkt mit Immich.
 
 ## Datenschutz (bitte lesen)
@@ -57,6 +58,8 @@ npm run lint && npm run typecheck && npm test
 |---|---|
 | `src/lib/immich.ts` | Immich-API (Alben, Fotos, Personen), kleiner Zwischenspeicher (2 Min.) |
 | `src/lib/format.ts` | Albumnamen („Saison – Spiel") → Saison/Titel, Datum, Gruppierung |
+| `src/lib/portraits.ts` | Kaderporträts von uh-regio-entlebuch.ch (`public/portraits`), Zuordnung über den Namen in Immich |
+| `src/lib/face.ts` | Gesichtsbild aus dem neusten Foto für alle ohne Kaderporträt |
 | `src/lib/limit.ts` | höchstens 3 gleichzeitige ZIP-Downloads |
 | `src/app/img/…`, `src/app/face/…`, `src/app/zip/…` | Bilder, Gesichter und ZIP-Archive aus Immich durchreichen |
 | `src/app/globals.css` | das gesamte Design |

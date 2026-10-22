@@ -139,8 +139,24 @@ export function getAlbumPhotos(id: string): Promise<Photo[]> {
   return cached(`album:${id}`, TTL, () => searchPhotos({ albumIds: [id] }));
 }
 
+/** Fotos einer Person, neueste zuerst */
 export function getPersonPhotos(id: string): Promise<Photo[]> {
-  return cached(`person:${id}`, TTL, () => searchPhotos({ personIds: [id] }));
+  return cached(`person:${id}`, TTL, async () => (await searchPhotos({ personIds: [id] })).reverse());
+}
+
+/** Gesichtsrahmen in Pixeln des Bildes, auf dem Immich das Gesicht erkannt hat (imageWidth × imageHeight) */
+export type FaceBox = { x1: number; y1: number; x2: number; y2: number; imageWidth: number; imageHeight: number };
+
+type RawFace = { boundingBoxX1: number; boundingBoxY1: number; boundingBoxX2: number; boundingBoxY2: number; imageWidth: number; imageHeight: number };
+type AssetDetail = { people?: { id: string; faces?: RawFace[] }[] };
+
+/** Grösstes Gesicht einer Person auf einem Foto oder null */
+export async function getFaceBox(assetId: string, personId: string): Promise<FaceBox | null> {
+  const asset = await json<AssetDetail>(`/assets/${assetId}`);
+  const faces = asset.people?.find((p) => p.id === personId)?.faces ?? [];
+  const area = (f: RawFace) => (f.boundingBoxX2 - f.boundingBoxX1) * (f.boundingBoxY2 - f.boundingBoxY1);
+  const f = faces.filter((f) => f.imageWidth > 0 && f.imageHeight > 0 && area(f) > 0).sort((a, b) => area(b) - area(a))[0];
+  return f ? { x1: f.boundingBoxX1, y1: f.boundingBoxY1, x2: f.boundingBoxX2, y2: f.boundingBoxY2, imageWidth: f.imageWidth, imageHeight: f.imageHeight } : null;
 }
 
 type PeopleResponse = { people: { id: string; name: string; isHidden?: boolean }[]; hasNextPage?: boolean };

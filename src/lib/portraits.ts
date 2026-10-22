@@ -1,10 +1,11 @@
-// Kaderporträts von uh-regio-entlebuch.ch (Frauen I), als Kopfausschnitt in public/portraits.
-// Gibt es zu einer Immich-Person ein Porträt, zeigt die Seite dieses statt des Gesichts aus Immich.
+// Kaderporträts von uh-regio-entlebuch.ch (Frauen I, Frauen II, Trainer), als Kopfausschnitt in public/portraits.
+// Gibt es zu einer Immich-Person ein Porträt, zeigt die Seite dieses, sonst das Gesicht aus ihrem neusten Foto.
 // Spielerinnen ohne echtes Porträt auf der Vereinsseite (nur Silhouette) fehlen hier bewusst.
 
 type Portrait = { name: string; file: string; aliases?: string[] };
 
 export const PORTRAITS: Portrait[] = [
+  // Frauen I
   { name: "Leandra Fischer", file: "leandra-fischer.jpg", aliases: ["Leli Fischer"] },
   { name: "Ronja Imboden", file: "ronja-imboden.jpg" },
   { name: "Charlotte Fankhauser", file: "charlotte-fankhauser.jpg" },
@@ -21,6 +22,24 @@ export const PORTRAITS: Portrait[] = [
   { name: "Céline Schmid", file: "celine-schmid.jpg" },
   { name: "Laura Emmenegger", file: "laura-emmenegger.jpg" },
   { name: "Debora Bucher", file: "debora-bucher.jpg" },
+  // Frauen II
+  { name: "Jana Ruesch", file: "jana-ruesch.jpg" },
+  { name: "Nicole Spycher", file: "nicole-spycher.jpg" },
+  { name: "Sabrina Bieri", file: "sabrina-bieri.jpg" },
+  { name: "Nicol Fankhauser", file: "nicol-fankhauser.jpg" },
+  { name: "Jolanda Bieri", file: "jolanda-bieri.jpg" },
+  { name: "Elena Stalder", file: "elena-stalder.jpg" },
+  { name: "Katja Wespi", file: "katja-wespi.jpg" },
+  { name: "Aline Lötscher", file: "aline-loetscher.jpg", aliases: ["Alina Lötscher"] },
+  { name: "Samira Theiler", file: "samira-theiler.jpg" },
+  { name: "Lina Wicki", file: "lina-wicki.jpg" },
+  { name: "Mia Limacher", file: "mia-limacher.jpg" },
+  { name: "Sarah Bieri", file: "sarah-bieri.jpg" },
+  // Trainer
+  { name: "Boris Giger", file: "boris-giger.jpg" },
+  { name: "Lukas Zihlmann", file: "lukas-zihlmann.jpg" },
+  { name: "Manuel Schmid", file: "manuel-schmid.jpg" },
+  { name: "Nick Stalder", file: "nick-stalder.jpg" },
 ];
 
 /** "Lötscher-Töngi Fabienne" → ["fabienne", "loetscher", "toengi"] (Reihenfolge und Akzente egal) */

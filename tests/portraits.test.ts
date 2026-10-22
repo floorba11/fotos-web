@@ -18,6 +18,11 @@ describe("portraitFor", () => {
   it("passt auch auf einen Teil eines Doppelnamens", () => {
     expect(portraitFor("Fabienne Lötscher")).toBe("/portraits/fabienne-loetscher-toengi.jpg");
   });
+  it("unterscheidet Spielerinnen mit gleichem Nachnamen (auch Frauen II)", () => {
+    expect(portraitFor("Sarah Bieri")).toBe("/portraits/sarah-bieri.jpg");
+    expect(portraitFor("Bieri Jolanda")).toBe("/portraits/jolanda-bieri.jpg");
+    expect(portraitFor("Alina Lötscher")).toBe("/portraits/aline-loetscher.jpg");
+  });
   it("kennt Spitznamen", () => {
     expect(portraitFor("Leli Fischer")).toBe("/portraits/leandra-fischer.jpg");
   });

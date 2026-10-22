@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { getAlbumPhotos, getAlbums, getPeople, isUuid } from "../src/lib/immich";
+import { getAlbumPhotos, getAlbums, getPeople, getPersonPhotos, isUuid } from "../src/lib/immich";
 
 const ok = (body: unknown) => Promise.resolve(new Response(JSON.stringify(body), { status: 200 }));
 
@@ -36,6 +36,14 @@ describe("immich", () => {
     const photos = await getAlbumPhotos("album-seiten-test");
     expect(photos.map((p) => p.id)).toEqual(["a", "b"]);
     expect(calls).toBe(2);
+  });
+
+  it("Fotos einer Person: neueste zuerst", async () => {
+    const asset = (id: string, t: string) => ({ id, type: "IMAGE", originalFileName: `${id}.JPG`, width: 10, height: 5, fileCreatedAt: t });
+    vi.spyOn(globalThis, "fetch").mockImplementation(() =>
+      ok({ assets: { items: [asset("a", "2026-01-01T00:00:00Z"), asset("c", "2026-03-01T00:00:00Z"), asset("b", "2026-02-01T00:00:00Z")], nextPage: null } }),
+    );
+    expect((await getPersonPhotos("person-sortier-test")).map((p) => p.id)).toEqual(["c", "b", "a"]);
   });
 
   it("Personen: unbenannte und versteckte ausblenden", async () => {

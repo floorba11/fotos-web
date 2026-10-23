@@ -34,6 +34,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 Spiele
               </NavLink>
               <NavLink href="/spieler">Spieler</NavLink>
+              <NavLink href="/weitere">
+                Weitere<span className="nav-long"> Fotos</span>
+              </NavLink>
             </nav>
           </div>
         </header>

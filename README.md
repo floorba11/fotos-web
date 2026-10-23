@@ -12,6 +12,9 @@ Besucher → Caddy (Portal, ~/unihockey) → fotos_web:3000 → Immich-API (immi
 - **Album** (`/album/<id>`): Fotoraster, Grossansicht (Pfeiltasten, Wischen), Original- und ZIP-Download.
 - **Spieler** (`/spieler`, `/spieler/<id>`): benannte Personen aus Immich, alle Fotos der Person (neueste zuerst), ZIP-Download.
   Als Bild dient das Kaderporträt der Vereinsseite, sonst das Gesicht aus dem neusten Foto der Person.
+- **Weitere Fotos** (`/weitere`, `/weitere/<id>`): Fotos ohne Unihockey-Bezug (z.B. Natur) im Hauptordner `weitere` auf der
+  Storage Box, z.B. `weitere/Natur/Aletsch` → Gruppe „Natur", Album „Aletsch". Mit Download, aber nicht bei den Spielen und
+  nicht auf Spielerseiten.
 - Der API-Schlüssel bleibt auf dem Server. Der Browser spricht nur mit dieser Website, nie direkt mit Immich.
 
 ## Datenschutz (bitte lesen)

@@ -1,13 +1,14 @@
 import Link from "next/link";
 import { AlbumBrowser } from "@/components/AlbumBrowser";
-import { formatDateRange, parseAlbumName } from "@/lib/format";
+import { formatDateRange, isOtherAlbum, parseAlbumName } from "@/lib/format";
 import { getAlbums, getPeople } from "@/lib/immich";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
   // Personen sind optional: ohne Gesichtserkennung bleibt die Startseite trotzdem nutzbar
-  const [albums, players] = await Promise.all([getAlbums(), getPeople().catch(() => [])]);
+  const [all, players] = await Promise.all([getAlbums(), getPeople().catch(() => [])]);
+  const albums = all.filter((a) => !isOtherAlbum(a.name));
   const cards = albums.map((a) => ({
     id: a.id,
     ...parseAlbumName(a.name),

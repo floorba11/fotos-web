@@ -1,3 +1,5 @@
+import { isOtherAlbum } from "./format";
+
 // Zugriff auf die Immich-Schnittstelle (nur auf dem Server; der API-Schlüssel gelangt nie in den Browser).
 // Benötigte Berechtigungen des Schlüssels: album.read, asset.read, asset.view, asset.download, person.read
 
@@ -150,22 +152,28 @@ export function getAlbumPhotos(id: string): Promise<Photo[]> {
  * Fotos aus "_"-Alben oder ohne Album bleiben so verborgen, auch wenn Immich darauf eine Spielerin erkennt.
  */
 export function getVisiblePhotoIds(): Promise<Set<string>> {
-  return cached("visible", TTL, async () => {
-    const ids = new Set<string>();
-    const albums = await getAlbums();
-    // höchstens 4 Alben gleichzeitig, um Immich auf dem kleinen Server nicht zu überlasten
-    for (let i = 0; i < albums.length; i += 4) {
-      const batch = await Promise.all(albums.slice(i, i + 4).map((a) => getAlbumPhotos(a.id)));
-      for (const photos of batch) for (const p of photos) ids.add(p.id);
-    }
-    return ids;
-  });
+  return cached("visible", TTL, async () => photoIds(await getAlbums()));
 }
 
-/** Fotos einer Person aus sichtbaren Alben, neueste zuerst */
+/** IDs der Fotos aus Spielalben, ohne "Weitere Fotos": nur diese erscheinen auf Spielerseiten */
+function getGamePhotoIds(): Promise<Set<string>> {
+  return cached("visible:spiele", TTL, async () => photoIds((await getAlbums()).filter((a) => !isOtherAlbum(a.name))));
+}
+
+async function photoIds(albums: Album[]): Promise<Set<string>> {
+  const ids = new Set<string>();
+  // höchstens 4 Alben gleichzeitig, um Immich auf dem kleinen Server nicht zu überlasten
+  for (let i = 0; i < albums.length; i += 4) {
+    const batch = await Promise.all(albums.slice(i, i + 4).map((a) => getAlbumPhotos(a.id)));
+    for (const photos of batch) for (const p of photos) ids.add(p.id);
+  }
+  return ids;
+}
+
+/** Fotos einer Person aus sichtbaren Spielalben, neueste zuerst */
 export function getPersonPhotos(id: string): Promise<Photo[]> {
   return cached(`person:${id}`, TTL, async () => {
-    const [photos, visible] = await Promise.all([searchPhotos({ personIds: [id] }), getVisiblePhotoIds()]);
+    const [photos, visible] = await Promise.all([searchPhotos({ personIds: [id] }), getGamePhotoIds()]);
     return photos.filter((p) => visible.has(p.id)).reverse();
   });
 }

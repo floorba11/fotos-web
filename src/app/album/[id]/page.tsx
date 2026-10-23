@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Gallery } from "@/components/Gallery";
 import { MatchTitle } from "@/components/MatchTitle";
-import { formatDateRange, parseAlbumName } from "@/lib/format";
+import { formatDateRange, isOtherAlbum, parseAlbumName } from "@/lib/format";
 import { getAlbum, getAlbumPhotos } from "@/lib/immich";
 
 export const dynamic = "force-dynamic";
@@ -25,7 +25,7 @@ export default async function AlbumPage({ params }: Props) {
   return (
     <>
       <nav className="crumbs" aria-label="Zurück">
-        <Link href="/">← Alle Spiele</Link>
+        {isOtherAlbum(album.name) ? <Link href="/weitere">← Weitere Fotos</Link> : <Link href="/">← Alle Spiele</Link>}
       </nav>
       <header className="page-head">
         <div>

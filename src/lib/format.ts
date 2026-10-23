@@ -4,10 +4,17 @@ export type AlbumLabel = { season: string | null; title: string };
 
 const pretty = (s: string) => s.replace(/_/g, " ").trim();
 
-/** "Saison_26-27 – URE_D1_vs_Wizards" (so legt album-sync die Alben an) → Saison "Saison 26-27", Titel "URE D1 vs Wizards" */
+/** Alben aus dem Hauptordner "weitere" (z.B. Naturfotos) haben nichts mit Unihockey zu tun und erscheinen unter "Weitere Fotos" */
+export const isOtherAlbum = (name: string) => name.split(SEP)[0].trim().toLowerCase() === "weitere";
+
+/**
+ * "Saison_26-27 – URE_D1_vs_Wizards" (so legt album-sync die Alben an) → Saison "Saison 26-27", Titel "URE D1 vs Wizards".
+ * Bei "weitere – Natur – Aletsch" fällt "weitere" weg → Gruppe "Natur", Titel "Aletsch".
+ */
 export function parseAlbumName(name: string): AlbumLabel {
   const parts = name.split(SEP);
-  if (parts.length < 2) return { season: null, title: pretty(name) };
+  if (parts.length > 1 && isOtherAlbum(name)) parts.shift();
+  if (parts.length < 2) return { season: null, title: pretty(parts[0]) };
   return { season: pretty(parts[0]), title: pretty(parts.slice(1).join(SEP)) };
 }
 

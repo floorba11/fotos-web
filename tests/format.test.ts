@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatDateRange, groupBySeason, parseAlbumName } from "../src/lib/format";
+import { formatDateRange, groupBySeason, isOtherAlbum, parseAlbumName } from "../src/lib/format";
 
 describe("parseAlbumName", () => {
   it("trennt Saison und Spiel", () => {
@@ -10,6 +10,10 @@ describe("parseAlbumName", () => {
   });
   it("behält tiefere Ordner im Titel", () => {
     expect(parseAlbumName("Saison_26-27 – Cup – Final")).toEqual({ season: "Saison 26-27", title: "Cup – Final" });
+  });
+  it("lässt den Hauptordner weitere weg", () => {
+    expect(parseAlbumName("weitere – Natur – Aletsch")).toEqual({ season: "Natur", title: "Aletsch" });
+    expect(parseAlbumName("weitere – Herbst_Wald")).toEqual({ season: null, title: "Herbst Wald" });
   });
 });
 
@@ -41,5 +45,14 @@ describe("groupBySeason", () => {
       ["Saison 25-26", [3]],
       ["Weitere", [1]],
     ]);
+  });
+});
+
+describe("isOtherAlbum", () => {
+  it("nur Alben aus dem Hauptordner weitere", () => {
+    expect(isOtherAlbum("weitere – Natur")).toBe(true);
+    expect(isOtherAlbum("Weitere – Natur")).toBe(true);
+    expect(isOtherAlbum("Saison_26-27 – Weitere")).toBe(false);
+    expect(isOtherAlbum("Weiterbildung")).toBe(false);
   });
 });

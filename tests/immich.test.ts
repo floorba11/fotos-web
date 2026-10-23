@@ -44,10 +44,12 @@ describe("immich", () => {
     const albums = [
       { id: "spiel", albumName: "Saison – Spiel", albumThumbnailAssetId: "a", assetCount: 3 },
       { id: "privat", albumName: "_Privat – Hochzeit", albumThumbnailAssetId: "p", assetCount: 1 },
+      { id: "natur", albumName: "weitere – Natur", albumThumbnailAssetId: "n", assetCount: 1 },
     ];
     const byFilter = (body: { albumIds?: string[]; personIds?: string[] }) => {
-      if (body.personIds) return [asset("a", "2026-01-01T00:00:00Z"), asset("p", "2026-04-01T00:00:00Z"), asset("ohne", "2026-05-01T00:00:00Z"), asset("c", "2026-03-01T00:00:00Z"), asset("b", "2026-02-01T00:00:00Z")];
+      if (body.personIds) return [asset("a", "2026-01-01T00:00:00Z"), asset("p", "2026-04-01T00:00:00Z"), asset("n", "2026-06-01T00:00:00Z"), asset("ohne", "2026-05-01T00:00:00Z"), asset("c", "2026-03-01T00:00:00Z"), asset("b", "2026-02-01T00:00:00Z")];
       if (body.albumIds?.[0] === "spiel") return [asset("a", "2026-01-01T00:00:00Z"), asset("b", "2026-02-01T00:00:00Z"), asset("c", "2026-03-01T00:00:00Z")];
+      if (body.albumIds?.[0] === "natur") return [asset("n", "2026-06-01T00:00:00Z")];
       return [asset("p", "2026-04-01T00:00:00Z")];
     };
     vi.spyOn(globalThis, "fetch").mockImplementation((url, init) =>
@@ -55,7 +57,7 @@ describe("immich", () => {
         ? ok(albums)
         : ok({ assets: { items: byFilter(JSON.parse(String(init?.body))), nextPage: null } }),
     );
-    // "p" liegt in einem "_"-Album, "ohne" in keinem Album: beide bleiben verborgen
+    // "p" liegt in einem "_"-Album, "ohne" in keinem Album, "n" unter "Weitere Fotos": alle bleiben verborgen
     expect((await getPersonPhotos("person-sichtbar-test")).map((p) => p.id)).toEqual(["c", "b", "a"]);
     expect(fetch).not.toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ body: expect.stringContaining('"privat"') }));
   });

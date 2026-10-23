@@ -8,7 +8,8 @@ import type { PlayerCard } from "./PlayerBrowser";
 
 export type AlbumCard = { id: string; season: string | null; title: string; date: string; count: number; coverId: string | null };
 
-export function AlbumBrowser({ cards, players }: { cards: AlbumCard[]; players: PlayerCard[] }) {
+/** Albenliste mit Suche; für "Weitere Fotos" ohne Spieler und mit eigenem Link (base) */
+export function AlbumBrowser({ cards, players = [], base = "/album" }: { cards: AlbumCard[]; players?: PlayerCard[]; base?: string }) {
   const [q, setQ] = useState("");
   const needle = q.trim().toLowerCase();
   const shown = needle ? cards.filter((c) => `${c.title} ${c.season ?? ""}`.toLowerCase().includes(needle)) : cards;
@@ -21,8 +22,8 @@ export function AlbumBrowser({ cards, players }: { cards: AlbumCard[]; players: 
           type="search"
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder={players.length ? "Spiel, Gegner oder Spielername …" : "Spiel oder Gegner suchen …"}
-          aria-label="Spiele und Spieler durchsuchen"
+          placeholder={base !== "/album" ? "Album suchen …" : players.length ? "Spiel, Gegner oder Spielername …" : "Spiel oder Gegner suchen …"}
+          aria-label={base !== "/album" ? "Alben durchsuchen" : "Spiele und Spieler durchsuchen"}
         />
       </div>
 
@@ -56,7 +57,7 @@ export function AlbumBrowser({ cards, players }: { cards: AlbumCard[]; players: 
           </h2>
           <div className="cards">
             {g.items.map((c) => (
-              <Link key={c.id} href={`/album/${c.id}`} className="card">
+              <Link key={c.id} href={`${base}/${c.id}`} className="card">
                 <div className="card-img">
                   {c.coverId ? (
                     // eslint-disable-next-line @next/next/no-img-element

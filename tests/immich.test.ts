@@ -1,11 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { getAlbumPhotos, getAlbums, getPeople, getPersonPhotos, isUuid } from "../src/lib/immich";
+import { clearCache, getAlbumPhotos, getAlbums, getPeople, getPersonPhotos, isUuid } from "../src/lib/immich";
 
 const ok = (body: unknown) => Promise.resolve(new Response(JSON.stringify(body), { status: 200 }));
 
 beforeEach(() => {
   process.env.IMMICH_URL = "http://immich.test";
   process.env.IMMICH_API_KEY = "k";
+  clearCache();
 });
 afterEach(() => vi.restoreAllMocks());
 
@@ -38,12 +39,25 @@ describe("immich", () => {
     expect(calls).toBe(2);
   });
 
-  it("Fotos einer Person: neueste zuerst", async () => {
+  it("Fotos einer Person: nur aus sichtbaren Alben, neueste zuerst", async () => {
     const asset = (id: string, t: string) => ({ id, type: "IMAGE", originalFileName: `${id}.JPG`, width: 10, height: 5, fileCreatedAt: t });
-    vi.spyOn(globalThis, "fetch").mockImplementation(() =>
-      ok({ assets: { items: [asset("a", "2026-01-01T00:00:00Z"), asset("c", "2026-03-01T00:00:00Z"), asset("b", "2026-02-01T00:00:00Z")], nextPage: null } }),
+    const albums = [
+      { id: "spiel", albumName: "Saison – Spiel", albumThumbnailAssetId: "a", assetCount: 3 },
+      { id: "privat", albumName: "_Privat – Hochzeit", albumThumbnailAssetId: "p", assetCount: 1 },
+    ];
+    const byFilter = (body: { albumIds?: string[]; personIds?: string[] }) => {
+      if (body.personIds) return [asset("a", "2026-01-01T00:00:00Z"), asset("p", "2026-04-01T00:00:00Z"), asset("ohne", "2026-05-01T00:00:00Z"), asset("c", "2026-03-01T00:00:00Z"), asset("b", "2026-02-01T00:00:00Z")];
+      if (body.albumIds?.[0] === "spiel") return [asset("a", "2026-01-01T00:00:00Z"), asset("b", "2026-02-01T00:00:00Z"), asset("c", "2026-03-01T00:00:00Z")];
+      return [asset("p", "2026-04-01T00:00:00Z")];
+    };
+    vi.spyOn(globalThis, "fetch").mockImplementation((url, init) =>
+      String(url).endsWith("/albums")
+        ? ok(albums)
+        : ok({ assets: { items: byFilter(JSON.parse(String(init?.body))), nextPage: null } }),
     );
-    expect((await getPersonPhotos("person-sortier-test")).map((p) => p.id)).toEqual(["c", "b", "a"]);
+    // "p" liegt in einem "_"-Album, "ohne" in keinem Album: beide bleiben verborgen
+    expect((await getPersonPhotos("person-sichtbar-test")).map((p) => p.id)).toEqual(["c", "b", "a"]);
+    expect(fetch).not.toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ body: expect.stringContaining('"privat"') }));
   });
 
   it("Personen: unbenannte und versteckte ausblenden", async () => {

@@ -1,6 +1,7 @@
 import sharp from "sharp";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { FACE_SIZE, faceCrop, newestFace } from "../src/lib/face";
+import { clearCache } from "../src/lib/immich";
 
 const box = { x1: 100, y1: 100, x2: 200, y2: 200, imageWidth: 1000, imageHeight: 800 };
 
@@ -24,6 +25,7 @@ describe("newestFace", () => {
   beforeEach(() => {
     process.env.IMMICH_URL = "http://immich.test";
     process.env.IMMICH_API_KEY = "k";
+    clearCache();
   });
   afterEach(() => vi.restoreAllMocks());
 
@@ -36,6 +38,7 @@ describe("newestFace", () => {
       const url = String(input).replace("http://immich.test/api", "");
       seen.push(url);
       const json = (b: unknown) => Promise.resolve(new Response(JSON.stringify(b)));
+      if (url === "/albums") return json([{ id: "spiel", albumName: "Spiel", albumThumbnailAssetId: "alt", assetCount: 3 }]);
       if (url === "/search/metadata")
         return json({ assets: { items: [asset("alt", "2026-01-01T00:00:00Z"), asset("neu", "2026-03-01T00:00:00Z"), asset("mitte", "2026-02-01T00:00:00Z")], nextPage: null } });
       // auf dem neusten Foto ist die Person nicht erkannt, auf dem zweitneusten schon
@@ -47,6 +50,6 @@ describe("newestFace", () => {
     const jpeg = await newestFace("p1");
     expect(jpeg).not.toBeNull();
     expect(await sharp(jpeg!).metadata()).toMatchObject({ width: FACE_SIZE, height: FACE_SIZE, format: "jpeg" });
-    expect(seen).toEqual(["/search/metadata", "/assets/neu", "/assets/mitte", "/assets/mitte/thumbnail?size=preview"]);
+    expect(seen.filter((u) => u.startsWith("/assets"))).toEqual(["/assets/neu", "/assets/mitte", "/assets/mitte/thumbnail?size=preview"]);
   });
 });

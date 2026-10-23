@@ -21,7 +21,13 @@ Die Website ist **öffentlich**, ohne Anmeldung. Wer die Adresse kennt, sieht al
 - Suchmaschinen sind ausgesperrt (`robots.txt`, `X-Robots-Tag`, `<meta robots>`), das ist aber nur eine Bitte.
 - **Einwilligung** der Spieler einholen, bei Minderjährigen der Eltern. Gesichtserkennung verarbeitet biometrische Daten.
 - Wer nicht erscheinen soll: in Immich die Person **ausblenden** (verschwindet aus `/spieler`) und die Fotos aus dem Album
-  nehmen. Alben, deren Name mit `_` beginnt, zeigt die Website nie.
+  nehmen.
+- **Private Aufträge** (nicht für die Website): Ordner mit `_` beginnen lassen, z.B. `_Privat/Hochzeit_Muster` auf der
+  Storage Box. `album-sync` macht daraus das Album „_Privat – Hochzeit_Muster", und Alben, deren Name mit `_` beginnt,
+  zeigt die Website nie. Auf Spielerseiten, in Spieler-ZIPs, als Gesichtsbild und unter `/img/…` erscheinen nur Fotos
+  aus sichtbaren Alben; Fotos aus `_`-Alben oder ohne Album bleiben verborgen, auch wenn Immich darauf eine Spielerin
+  erkennt. An Kunden gibst du solche Alben direkt in Immich weiter (*Teilen → Link erstellen*, mit Passwort/Ablaufdatum).
+  Achtung: Die Gesichtserkennung von Immich läuft auch über diese Fotos.
 - `CONTACT_EMAIL` setzen, dann steht im Fuss eine Adresse für „Foto soll weg".
 - Falls die Seite doch geschützt sein soll (Passwort oder Link pro Spieler), ist das ein späterer Ausbau.
 

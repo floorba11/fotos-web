@@ -41,7 +41,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <footer className="foot">
           <div className="wrap">
             <p className="foot-brand">© {new Date().getFullYear()} floorba11 · Luc Maradan Fotografie</p>
-            <p>Die Fotos sind nur für die Spielerinnen und Spieler gedacht. Bitte nicht öffentlich weiterverbreiten.</p>
+            <p>
+              Die Fotos dürfen gerne verwendet werden, wenn ich markiert werde: auf Instagram mit{" "}
+              <a href="https://www.instagram.com/floorba11/" target="_blank" rel="noopener noreferrer">
+                @floorba11
+              </a>
+              , sonst mit «Luc Maradan».
+            </p>
             {contact && (
               <p>
                 Du möchtest nicht abgebildet sein oder ein Foto soll weg? <a href={`mailto:${contact}`}>Schreib uns</a>.

@@ -15,7 +15,10 @@ export type Person = { id: string; name: string };
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 export const isUuid = (s: string) => UUID.test(s);
 
-/** Alben, deren Name mit "_" beginnt, sind intern und werden nicht angezeigt. */
+/**
+ * Alben, deren Name mit "_" beginnt, sind intern oder private Aufträge und werden nicht angezeigt.
+ * Ihre Fotos erscheinen auch nicht auf Spielerseiten (siehe getVisiblePhotoIds).
+ */
 export const isHiddenAlbum = (name: string) => name.startsWith("_");
 
 export class ImmichError extends Error {
@@ -63,6 +66,9 @@ export function cached<T>(key: string, ttlMs: number, load: () => Promise<T>): P
   store.set(key, { exp: now + ttlMs, value });
   return value;
 }
+
+/** Leert den Zwischenspeicher (für Tests) */
+export const clearCache = () => store.clear();
 
 const TTL = 2 * 60 * 1000;
 
@@ -139,9 +145,29 @@ export function getAlbumPhotos(id: string): Promise<Photo[]> {
   return cached(`album:${id}`, TTL, () => searchPhotos({ albumIds: [id] }));
 }
 
-/** Fotos einer Person, neueste zuerst */
+/**
+ * IDs aller Fotos in sichtbaren Alben. Nur diese zeigt die Website ausserhalb der Alben (Spielerseiten, Gesichter, Bilder).
+ * Fotos aus "_"-Alben oder ohne Album bleiben so verborgen, auch wenn Immich darauf eine Spielerin erkennt.
+ */
+export function getVisiblePhotoIds(): Promise<Set<string>> {
+  return cached("visible", TTL, async () => {
+    const ids = new Set<string>();
+    const albums = await getAlbums();
+    // höchstens 4 Alben gleichzeitig, um Immich auf dem kleinen Server nicht zu überlasten
+    for (let i = 0; i < albums.length; i += 4) {
+      const batch = await Promise.all(albums.slice(i, i + 4).map((a) => getAlbumPhotos(a.id)));
+      for (const photos of batch) for (const p of photos) ids.add(p.id);
+    }
+    return ids;
+  });
+}
+
+/** Fotos einer Person aus sichtbaren Alben, neueste zuerst */
 export function getPersonPhotos(id: string): Promise<Photo[]> {
-  return cached(`person:${id}`, TTL, async () => (await searchPhotos({ personIds: [id] })).reverse());
+  return cached(`person:${id}`, TTL, async () => {
+    const [photos, visible] = await Promise.all([searchPhotos({ personIds: [id] }), getVisiblePhotoIds()]);
+    return photos.filter((p) => visible.has(p.id)).reverse();
+  });
 }
 
 /** Gesichtsrahmen in Pixeln des Bildes, auf dem Immich das Gesicht erkannt hat (imageWidth × imageHeight) */

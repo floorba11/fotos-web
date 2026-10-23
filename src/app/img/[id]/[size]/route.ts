@@ -1,4 +1,4 @@
-import { immich, isUuid } from "@/lib/immich";
+import { getVisiblePhotoIds, immich, isUuid } from "@/lib/immich";
 
 const PATHS: Record<string, (id: string) => string> = {
   thumbnail: (id) => `/assets/${id}/thumbnail?size=thumbnail`,
@@ -16,6 +16,10 @@ function fileName(upstream: Response, id: string): string {
 export async function GET(request: Request, ctx: { params: Promise<{ id: string; size: string }> }) {
   const { id, size } = await ctx.params;
   if (!isUuid(id) || !(size in PATHS)) return new Response("Nicht gefunden", { status: 404 });
+  // nur Fotos aus sichtbaren Alben, nie aus "_"-Alben
+  const visible = await getVisiblePhotoIds().catch(() => null);
+  if (!visible) return new Response("Galerie nicht erreichbar", { status: 502 });
+  if (!visible.has(id)) return new Response("Nicht gefunden", { status: 404 });
 
   const upstream = await immich(PATHS[size](id), { headers: { Accept: "*/*" } }).catch(() => null);
   if (!upstream) return new Response("Galerie nicht erreichbar", { status: 502 });

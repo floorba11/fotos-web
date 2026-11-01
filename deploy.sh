@@ -17,6 +17,8 @@ mkdir -p ../unihockey/sites
 cat > ../unihockey/sites/fotos-web.caddy <<CADDY
 $DOMAIN {
 	encode zstd gzip
+	# HSTS: Browser verbinden sich ein Jahr lang nur noch per HTTPS
+	header Strict-Transport-Security "max-age=31536000; includeSubDomains"
 	reverse_proxy fotos_web:3000 {
 		# ZIP-Downloads sofort weiterreichen, nicht puffern
 		flush_interval -1

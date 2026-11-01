@@ -46,14 +46,17 @@ Voraussetzung: Portal (`~/unihockey`) und Immich (`~/fotos`) laufen auf dem Serv
    `FOTOS_DOMAIN`), dann in `~/fotos`: Dateien aus dem Repo `fotos-server` holen und `bash deploy.sh`.
 3. In diesem Repo die Secrets `VM_HOST`, `VM_USER`, `VM_SSH_KEY` setzen (dieselben wie beim Portal).
 4. Erster Deploy: *Actions → Deploy → Run workflow*. Er kopiert die Dateien nach `~/fotos-web`.
-5. Auf dem Server `.env` anlegen und starten:
+5. **DNS**: A-Eintrag der Website-Adresse (z.B. `fotos.<domain>`) auf den Server, bei Cloudflare **Proxied** (orange
+   Wolke). So zählt Cloudflare die Besuche (*Analytics → Add filter → Host*). Die Website nimmt keine Uploads an, die
+   100-MB-Grenze von Cloudflare spielt also keine Rolle. Nur `immich.<domain>` bleibt „DNS only".
+6. Auf dem Server `.env` anlegen und starten:
    ```bash
    cd ~/fotos-web
    cp env.example .env && nano .env     # DOMAIN, IMMICH_API_KEY, CONTACT_EMAIL
    docker compose pull && bash deploy.sh
    ```
    `deploy.sh` startet die Website und trägt die Domain beim Caddy des Portals ein (Zertifikat automatisch).
-6. Danach genügt ein Push auf `main`: Tests laufen, das Image wird gebaut und auf dem Server gestartet.
+7. Danach genügt ein Push auf `main`: Tests laufen, das Image wird gebaut und auf dem Server gestartet.
 
 ## Entwickeln
 

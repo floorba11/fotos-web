@@ -29,7 +29,6 @@ export default async function Home() {
           </>
         )}
         <div className="hero-in wrap">
-          <p className="eyebrow">Gameday Archiv · Unihockey Fotografie</p>
           <h1>
             Vollgas auf dem Feld. <em>Für immer im Kasten.</em>
           </h1>

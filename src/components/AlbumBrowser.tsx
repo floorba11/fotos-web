@@ -63,15 +63,13 @@ export function AlbumBrowser({ cards, players = [], base = "/album" }: { cards: 
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={`/img/${c.coverId}/preview`} alt="" loading="lazy" />
                   ) : null}
+                  <span className="pill">{c.count} Fotos</span>
                 </div>
                 <div className="card-body">
                   <h3>
                     <MatchTitle title={c.title} />
                   </h3>
-                  <p>
-                    {c.date && <>{c.date} · </>}
-                    {c.count} Fotos
-                  </p>
+                  {c.date && <p>{c.date}</p>}
                 </div>
               </Link>
             ))}

@@ -64,7 +64,7 @@ export default async function Home() {
           )}
         </div>
       </section>
-      {albums.length ? <AlbumBrowser cards={cards} players={players} /> : <p className="empty">Noch keine Alben. Sobald die ersten Spiele hochgeladen sind, erscheinen sie hier.</p>}
+      {albums.length ? <AlbumBrowser cards={cards} /> : <p className="empty">Noch keine Alben. Sobald die ersten Spiele hochgeladen sind, erscheinen sie hier.</p>}
     </>
   );
 }

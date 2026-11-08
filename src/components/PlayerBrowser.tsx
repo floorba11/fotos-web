@@ -13,7 +13,7 @@ export function PlayerBrowser({ players }: { players: PlayerCard[] }) {
   return (
     <>
       <div className="search">
-        <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Name suchen …" aria-label="Spieler durchsuchen" />
+        <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Name suchen …" aria-label="Athleten durchsuchen" />
       </div>
       <div className="players">
         {shown.map((p) => (

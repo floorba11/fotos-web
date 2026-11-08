@@ -5,17 +5,15 @@ import { useState } from "react";
 import { groupBySeason } from "@/lib/format";
 import { getMatchMeta } from "@/lib/matchMetadata";
 import { parseAlbumTitle } from "@/lib/parseAlbumTitle";
-import { PlayerRoster, type PlayerCard } from "./PlayerRoster";
 
 export type AlbumCard = { id: string; season: string | null; title: string; date: string; count: number; coverId: string | null };
 
-/** Albenliste als Match-Poster mit Suche; für "Off-Court" ohne Spieler und Wettbewerbe, mit eigenem Link (base) */
-export function AlbumBrowser({ cards, players = [], base = "/album" }: { cards: AlbumCard[]; players?: PlayerCard[]; base?: string }) {
+/** Albenliste als Match-Poster mit Suche; für "Off-Court" ohne Wettbewerbe, mit eigenem Link (base) */
+export function AlbumBrowser({ cards, base = "/album" }: { cards: AlbumCard[]; base?: string }) {
   const [q, setQ] = useState("");
   const sport = base === "/album";
   const needle = q.trim().toLowerCase();
   const shown = needle ? cards.filter((c) => `${c.title} ${c.season ?? ""}`.toLowerCase().includes(needle)) : cards;
-  const people = needle ? players.filter((p) => p.name.toLowerCase().includes(needle)) : players;
 
   return (
     <>
@@ -24,21 +22,10 @@ export function AlbumBrowser({ cards, players = [], base = "/album" }: { cards: 
           type="search"
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder={!sport ? "Album suchen …" : players.length ? "Spiel, Gegner oder Spielername …" : "Spiel oder Gegner suchen …"}
-          aria-label={!sport ? "Alben durchsuchen" : "Spiele und Spieler durchsuchen"}
+          placeholder={sport ? "Spiel oder Gegner suchen …" : "Album suchen …"}
+          aria-label={sport ? "Spiele durchsuchen" : "Alben durchsuchen"}
         />
       </div>
-
-      {people.length > 0 && (
-        <section aria-labelledby="s-spieler">
-          <div className="section-row">
-            <h2 id="s-spieler" className="section">
-              Finde deine Fotos nach Gesicht
-            </h2>
-          </div>
-          <PlayerRoster players={people} total={players.length} />
-        </section>
-      )}
 
       <div id="spiele" />
       {groupBySeason(shown).map((g) => (
@@ -84,7 +71,7 @@ export function AlbumBrowser({ cards, players = [], base = "/album" }: { cards: 
           </div>
         </section>
       ))}
-      {!shown.length && !people.length && <p className="empty">Nichts gefunden.</p>}
+      {!shown.length && <p className="empty">Nichts gefunden.</p>}
     </>
   );
 }

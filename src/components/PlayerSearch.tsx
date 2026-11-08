@@ -36,7 +36,7 @@ export function PlayerSearch({ players }: { players: PlayerCard[] }) {
         aria-controls={listId}
         aria-autocomplete="list"
         aria-activedescendant={expanded && hits[active] ? `${listId}-${active}` : undefined}
-        aria-label="Spieler suchen"
+        aria-label="Athleten suchen"
         autoComplete="off"
         placeholder="Wer bist du? Name eintippen …"
         value={q}
@@ -49,7 +49,7 @@ export function PlayerSearch({ players }: { players: PlayerCard[] }) {
         onKeyDown={onKey}
       />
       {expanded && (
-        <ul className="psearch-list" id={listId} role="listbox" aria-label="Passende Spieler">
+        <ul className="psearch-list" id={listId} role="listbox" aria-label="Passende Athleten">
           {hits.length ? (
             hits.map((p, i) => (
               <li

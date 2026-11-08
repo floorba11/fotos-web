@@ -1,0 +1,89 @@
+/* Fairplay-Banner, Copy-Buttons und Toast */
+.fp-banner {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem 2rem;
+  margin: 2rem 0;
+  padding: 1.25rem 1.5rem 1.25rem 1.75rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  overflow: hidden;
+}
+/* Akzent-Streifen links, wie eine Karte des Schiedsrichters */
+.fp-banner::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 6px;
+  background: var(--accent);
+}
+.fp-text { flex: 1 1 22rem; min-width: 0; }
+.fp-text h2 {
+  margin: 0 0 0.5rem;
+  font-family: var(--font-display), sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  font-size: clamp(1.15rem, 3vw, 1.5rem);
+  color: var(--text-primary);
+}
+.fp-text p { margin: 0 0 0.75rem; color: var(--text-secondary); line-height: 1.5; }
+.fp-link { color: var(--accent); font-weight: 600; }
+.fp-link:hover { color: var(--accent-hover); }
+.fp-actions { display: flex; flex-direction: column; gap: 0.6rem; flex: 0 0 auto; }
+.fp-copy { cursor: pointer; }
+.fp-copy:focus-visible,
+.fp-link:focus-visible,
+.fp-toast-btn:focus-visible { outline: 2px solid var(--accent-hover); outline-offset: 2px; }
+
+@media (max-width: 600px) {
+  .fp-actions { flex: 1 1 100%; width: 100%; }
+  .fp-actions .fp-copy { width: 100%; justify-content: center; text-align: center; }
+}
+
+/* Toast: nicht blockierend, über der Lightbox (.lb = z-index 50) */
+.fp-toast-region {
+  position: fixed;
+  inset: auto 0 1rem 0;
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  padding: 0 1rem;
+  pointer-events: none;
+}
+.fp-toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  max-width: 32rem;
+  padding: 0.75rem 1rem;
+  background: var(--bg-dark);
+  color: var(--text-on-accent);
+  border: 1px solid rgb(248 245 245 / 0.15);
+  border-left: 4px solid var(--accent);
+  border-radius: 10px;
+  box-shadow: 0 10px 32px rgb(38 38 38 / 0.35);
+  font-size: 0.95rem;
+  animation: fp-toast-in 0.2s ease-out;
+}
+.fp-toast-btn {
+  flex: none;
+  padding: 0.4rem 0.8rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--text-on-accent);
+  color: var(--text-primary);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.fp-toast-btn:hover { background: var(--bg-subtle); }
+.fp-toast-btn:focus-visible { outline-color: var(--text-on-accent); }
+@keyframes fp-toast-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}

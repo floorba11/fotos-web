@@ -229,3 +229,31 @@ export async function getPerson(id: string): Promise<Person | null> {
   if (!isUuid(id)) return null;
   return (await getPeople()).find((p) => p.id === id) ?? null;
 }
+
+export type AlbumPerson = { id: string; name: string; photoIds: string[] };
+
+/**
+ * Benannte Personen, die in einem Album vorkommen, samt Foto-IDs dieses Albums (meiste Fotos zuerst).
+ * Pro Person eine Suche (album + person); höchstens 4 gleichzeitig, um Immich nicht zu überlasten.
+ */
+export function getAlbumPeople(albumId: string): Promise<AlbumPerson[]> {
+  if (!isUuid(albumId)) return Promise.resolve([]);
+  return cached(`albumPeople:${albumId}`, TTL, async () => {
+    const people = await getPeople();
+    const out: AlbumPerson[] = [];
+    for (let i = 0; i < people.length; i += 4) {
+      const batch = await Promise.all(
+        people.slice(i, i + 4).map(async (p) => {
+          try {
+            const photos = await searchPhotos({ albumIds: [albumId], personIds: [p.id] });
+            return photos.length ? { id: p.id, name: p.name, photoIds: photos.map((x) => x.id) } : null;
+          } catch {
+            return null; // eine fehlgeschlagene Person soll nicht alle kippen
+          }
+        }),
+      );
+      for (const r of batch) if (r) out.push(r);
+    }
+    return out.sort((a, b) => b.photoIds.length - a.photoIds.length || a.name.localeCompare(b.name, "de"));
+  });
+}

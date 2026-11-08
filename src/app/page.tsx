@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { AlbumBrowser } from "@/components/AlbumBrowser";
+import { PlayerSearch } from "@/components/PlayerSearch";
 import { formatDateRange, isOtherAlbum, parseAlbumName } from "@/lib/format";
 import { getAlbums, getPeople, pickHeroPhotoId } from "@/lib/immich";
 
@@ -31,9 +32,12 @@ export default async function Home() {
           </>
         )}
         <div className="hero-in wrap">
-          <p className="eyebrow">Spielfotos</p>
-          <h1>Deine Spiele. Deine Fotos.</h1>
-          <p className="lead">Such dein Spiel oder deinen Namen und lade die Bilder in voller Auflösung herunter.</p>
+          <p className="eyebrow">Gameday Archiv · Unihockey Fotografie</p>
+          <h1>
+            Vollgas auf dem Feld. <em>Für immer im Kasten.</em>
+          </h1>
+          <p className="lead">Finde dein Spiel oder filtere direkt nach deinem Gesicht – alle Action-Shots in voller Auflösung zum direkten Download.</p>
+          {players.length > 0 && <PlayerSearch players={players} />}
           <p className="hero-actions">
             <a className="btn" href="#spiele">
               Nach Spiel
@@ -43,9 +47,20 @@ export default async function Home() {
             </Link>
           </p>
           {albums.length > 0 && (
-            <p className="stats">
-              <b>{albums.length}</b> Spiele · <b>{players.length}</b> Spieler · <b>{photos}</b> Fotos
-            </p>
+            <ul className="stat-cubes" aria-label="Archiv in Zahlen">
+              <li>
+                <b>{albums.length}</b>
+                <span>Spiele</span>
+              </li>
+              <li>
+                <b>{players.length}</b>
+                <span>Spieler</span>
+              </li>
+              <li>
+                <b>{photos}</b>
+                <span>Fotos</span>
+              </li>
+            </ul>
           )}
         </div>
       </section>

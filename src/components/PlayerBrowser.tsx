@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
+import { PlayerPortrait, type PlayerCard } from "./PlayerRoster";
 
-export type PlayerCard = { id: string; name: string };
+export type { PlayerCard };
 
 export function PlayerBrowser({ players }: { players: PlayerCard[] }) {
   const [q, setQ] = useState("");
@@ -17,11 +17,7 @@ export function PlayerBrowser({ players }: { players: PlayerCard[] }) {
       </div>
       <div className="players">
         {shown.map((p) => (
-          <Link key={p.id} href={`/spieler/${p.id}`} className="player">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={`/face/${p.id}`} alt="" loading="lazy" />
-            <span>{p.name}</span>
-          </Link>
+          <PlayerPortrait key={p.id} {...p} />
         ))}
       </div>
       {!shown.length && <p className="empty">Niemand gefunden.</p>}

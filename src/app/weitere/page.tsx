@@ -4,7 +4,7 @@ import { formatDateRange, isOtherAlbum, parseAlbumName } from "@/lib/format";
 import { getAlbums } from "@/lib/immich";
 
 export const dynamic = "force-dynamic";
-export const metadata: Metadata = { title: "Weitere Fotos" };
+export const metadata: Metadata = { title: "Off-Court" };
 
 export default async function Other() {
   const albums = (await getAlbums()).filter((a) => isOtherAlbum(a.name));
@@ -18,7 +18,7 @@ export default async function Other() {
   return (
     <>
       <section className="hero small">
-        <p className="eyebrow">Weitere Fotos</p>
+        <p className="eyebrow">Off-Court</p>
         <h1>Abseits vom Spielfeld.</h1>
         <p className="lead">Natur und andere Bilder, die nichts mit Unihockey zu tun haben.</p>
       </section>

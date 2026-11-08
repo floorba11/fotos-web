@@ -3,14 +3,16 @@
 import Link from "next/link";
 import { useState } from "react";
 import { groupBySeason } from "@/lib/format";
-import { MatchTitle } from "./MatchTitle";
-import type { PlayerCard } from "./PlayerBrowser";
+import { getMatchMeta } from "@/lib/matchMetadata";
+import { parseAlbumTitle } from "@/lib/parseAlbumTitle";
+import { PlayerRoster, type PlayerCard } from "./PlayerRoster";
 
 export type AlbumCard = { id: string; season: string | null; title: string; date: string; count: number; coverId: string | null };
 
-/** Albenliste mit Suche; für "Weitere Fotos" ohne Spieler und mit eigenem Link (base) */
+/** Albenliste als Match-Poster mit Suche; für "Off-Court" ohne Spieler und Wettbewerbe, mit eigenem Link (base) */
 export function AlbumBrowser({ cards, players = [], base = "/album" }: { cards: AlbumCard[]; players?: PlayerCard[]; base?: string }) {
   const [q, setQ] = useState("");
+  const sport = base === "/album";
   const needle = q.trim().toLowerCase();
   const shown = needle ? cards.filter((c) => `${c.title} ${c.season ?? ""}`.toLowerCase().includes(needle)) : cards;
   const people = needle ? players.filter((p) => p.name.toLowerCase().includes(needle)) : players;
@@ -22,8 +24,8 @@ export function AlbumBrowser({ cards, players = [], base = "/album" }: { cards: 
           type="search"
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder={base !== "/album" ? "Album suchen …" : players.length ? "Spiel, Gegner oder Spielername …" : "Spiel oder Gegner suchen …"}
-          aria-label={base !== "/album" ? "Alben durchsuchen" : "Spiele und Spieler durchsuchen"}
+          placeholder={!sport ? "Album suchen …" : players.length ? "Spiel, Gegner oder Spielername …" : "Spiel oder Gegner suchen …"}
+          aria-label={!sport ? "Alben durchsuchen" : "Spiele und Spieler durchsuchen"}
         />
       </div>
 
@@ -31,50 +33,54 @@ export function AlbumBrowser({ cards, players = [], base = "/album" }: { cards: 
         <section aria-labelledby="s-spieler">
           <div className="section-row">
             <h2 id="s-spieler" className="section">
-              Spieler
+              Finde deine Fotos nach Gesicht
             </h2>
-            <Link href="/spieler" className="more">
-              Alle Spieler ›
-            </Link>
           </div>
-          <div className="strip">
-            {people.map((p) => (
-              <Link key={p.id} href={`/spieler/${p.id}`} className="strip-item">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={`/face/${p.id}`} alt="" loading="lazy" />
-                <span>{p.name}</span>
-              </Link>
-            ))}
-          </div>
+          <PlayerRoster players={people} total={players.length} />
         </section>
       )}
 
       <div id="spiele" />
-      {groupBySeason(shown).map((g, gi) => (
+      {groupBySeason(shown).map((g) => (
         <section key={g.season} aria-labelledby={`s-${g.season}`}>
           <h2 id={`s-${g.season}`} className="section">
             {g.season}
           </h2>
           <div className="cards">
-            {g.items.map((c, i) => (
-              <Link key={c.id} href={`${base}/${c.id}`} className={base === "/album" && !needle && gi === 0 && i === 0 ? "card card-featured" : "card"}>
-                <div className="card-img">
-                  {c.coverId ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={`/img/${c.coverId}/preview`} alt="" loading="lazy" />
-                  ) : null}
-                </div>
-                <div className="card-body">
-                  <h3>
-                    <MatchTitle title={c.title} />
-                  </h3>
-                  <p>
-                    {c.date && <>{c.date} · </>}
-                    {c.count} Fotos
-                  </p>
-                </div>
-              </Link>
-            ))}
+            {g.items.map((c, i) => {
+              const m = sport ? parseAlbumTitle(c.title) : null;
+              // Highlight: Cup-Spiele und das neueste Spiel jeder Saison (Liste ist neueste zuerst)
+              const hl = !!m && (m.isHighlight || i === 0);
+              const score = sport ? getMatchMeta(c.id, c.title)?.score : undefined;
+              const cleanTitle = m?.cleanTitle || c.title;
+              return (
+                <Link key={c.id} href={`${base}/${c.id}`} className={hl ? "poster poster-hl" : "poster"}>
+                  <div className="poster-img">
+                    {c.coverId ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={`/img/${c.coverId}/preview`} alt={`Spielfoto ${cleanTitle}`} loading="lazy" />
+                    ) : null}
+                  </div>
+                  <div className="poster-shade" />
+                  <div className="poster-top">
+                    {m?.competition && <span className={m.isCup ? "badge badge-cup" : "badge badge-glass"}>{m.competition.label}</span>}
+                    {score ? <span className="badge badge-score">{score}</span> : <span className="badge badge-count">{c.count} SHOTS</span>}
+                  </div>
+                  <div className="poster-body">
+                    <h3 className="poster-teams">
+                      {m?.awayTeam ? (
+                        <>
+                          {m.homeTeam} <span className="vs">vs</span> {m.awayTeam}
+                        </>
+                      ) : (
+                        cleanTitle
+                      )}
+                    </h3>
+                    {c.date && <p className="poster-date">{c.date}</p>}
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         </section>
       ))}

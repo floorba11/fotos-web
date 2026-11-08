@@ -1,0 +1,33 @@
+import Link from "next/link";
+import { splitName } from "@/lib/name";
+
+export type PlayerCard = { id: string; name: string };
+
+/** Spielerkarte im Porträtformat: Vorname klein, Nachname gross in der Sport-Schrift */
+export function PlayerPortrait({ id, name }: PlayerCard) {
+  const { first, last } = splitName(name);
+  return (
+    <Link href={`/spieler/${id}`} className="pcard" aria-label={name}>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={`/face/${id}`} alt={`Porträt von ${name}`} loading="lazy" />
+      <span className="pcard-name">
+        {first && <span className="pcard-first">{first}</span>}
+        <span className="pcard-last">{last}</span>
+      </span>
+    </Link>
+  );
+}
+
+/** Horizontaler Slider mit Spielerkarten und Link auf alle Spieler */
+export function PlayerRoster({ players, total }: { players: PlayerCard[]; total: number }) {
+  return (
+    <div className="roster">
+      {players.map((p) => (
+        <PlayerPortrait key={p.id} {...p} />
+      ))}
+      <Link href="/spieler" className="roster-cta">
+        Alle {total} Spieler durchsuchen →
+      </Link>
+    </div>
+  );
+}

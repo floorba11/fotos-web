@@ -39,7 +39,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <NavLink href="/" exact>
                 Spiele
               </NavLink>
-              <NavLink href="/spieler">Spieler</NavLink>
+              <NavLink href="/spieler">Athleten</NavLink>
               <NavLink href="/weitere">Off-Court</NavLink>
             </nav>
           </div>

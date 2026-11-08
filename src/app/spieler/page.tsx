@@ -10,7 +10,7 @@ export default async function Players() {
   return (
     <>
       <section className="hero small">
-        <p className="eyebrow">Spielerinnen und Spieler</p>
+        <p className="eyebrow">Athleten-Roster</p>
         <h1>Finde dich.</h1>
         <p className="lead">Klick auf dein Gesicht und sieh alle Fotos, auf denen du bist, aus allen Spielen.</p>
       </section>

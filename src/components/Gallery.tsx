@@ -1,10 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { DownloadLink } from "./DownloadLink";
 
 export type GalleryPhoto = { id: string; name: string; width: number; height: number };
 
-export function Gallery({ photos }: { photos: GalleryPhoto[] }) {
+export function Gallery({ photos, label }: { photos: GalleryPhoto[]; label?: string }) {
   const [open, setOpen] = useState<number | null>(null);
   const [touchX, setTouchX] = useState<number | null>(null);
 
@@ -27,6 +28,7 @@ export function Gallery({ photos }: { photos: GalleryPhoto[] }) {
     };
   }, [open, photos, step]);
 
+  const alt = (i: number) => (label ? `${label} – Foto ${i + 1}` : `Foto ${i + 1}`);
   const current = open === null ? null : photos[open];
 
   return (
@@ -42,7 +44,7 @@ export function Gallery({ photos }: { photos: GalleryPhoto[] }) {
             aria-label={`Foto ${i + 1} vergrössern`}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={`/img/${p.id}/thumbnail`} alt="" loading="lazy" width={p.width} height={p.height} />
+            <img src={`/img/${p.id}/thumbnail`} alt={alt(i)} loading="lazy" width={p.width} height={p.height} />
           </button>
         ))}
         <span className="grid-fill" aria-hidden />
@@ -79,14 +81,14 @@ export function Gallery({ photos }: { photos: GalleryPhoto[] }) {
           </button>
           <figure onClick={(e) => e.stopPropagation()}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img key={current.id} src={`/img/${current.id}/preview`} alt={`Foto ${open! + 1}`} />
+            <img key={current.id} src={`/img/${current.id}/preview`} alt={alt(open!)} />
             <figcaption>
               <span>
                 {open! + 1} / {photos.length}
               </span>
-              <a href={`/img/${current.id}/original?download=1`} download>
+              <DownloadLink href={`/img/${current.id}/original?download=1`} download>
                 Original herunterladen
-              </a>
+              </DownloadLink>
             </figcaption>
           </figure>
           <button

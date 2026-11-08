@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { clearCache, getAlbumPhotos, getHeroPhotoIds, getAlbums, getPeople, getPersonPhotos, isUuid } from "../src/lib/immich";
+import { clearCache, getAlbumPeople, getAlbumPhotos, getHeroPhotoIds, getAlbums, getPeople, getPersonPhotos, isUuid } from "../src/lib/immich";
 
 const ok = (body: unknown) => Promise.resolve(new Response(JSON.stringify(body), { status: 200 }));
 
@@ -84,5 +84,31 @@ describe("immich", () => {
       return ok({ assets: { items, nextPage: null } });
     });
     expect(await getHeroPhotoIds()).toEqual(["quer"]);
+  });
+});
+
+describe("getAlbumPeople", () => {
+  const A = "3f2b8c1e-9d4a-4e6b-8a1c-0123456789ab";
+  const asset = (id: string) => ({ id, type: "IMAGE", originalFileName: `${id}.JPG`, width: 10, height: 5, fileCreatedAt: "2026-01-01T00:00:00Z" });
+
+  it("nur Personen mit Treffern, nach Anzahl und Name sortiert, Fehler einzelner Personen ignoriert", async () => {
+    const hits: Record<string, string[]> = { p1: ["a"], p2: ["a", "b", "c"], p3: [], p5: ["a"] };
+    vi.spyOn(globalThis, "fetch").mockImplementation((url, init) => {
+      if (String(url).includes("/people")) {
+        return ok({ hasNextPage: false, people: [{ id: "p1", name: "Zora" }, { id: "p2", name: "Max" }, { id: "p3", name: "Leer" }, { id: "p4", name: "Kaputt" }, { id: "p5", name: "Anna" }] });
+      }
+      const body = JSON.parse(String(init?.body));
+      if (body.personIds[0] === "p4") return Promise.resolve(new Response("", { status: 500 }));
+      return ok({ assets: { items: hits[body.personIds[0]].map(asset), nextPage: null } });
+    });
+    const people = await getAlbumPeople(A);
+    expect(people.map((p) => p.name)).toEqual(["Max", "Anna", "Zora"]);
+    expect(people[0].photoIds).toEqual(["a", "b", "c"]);
+  });
+
+  it("ungültige Album-ID liefert [] ohne Anfrage", async () => {
+    const spy = vi.spyOn(globalThis, "fetch");
+    expect(await getAlbumPeople("../x")).toEqual([]);
+    expect(spy).not.toHaveBeenCalled();
   });
 });

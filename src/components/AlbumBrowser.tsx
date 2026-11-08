@@ -50,14 +50,14 @@ export function AlbumBrowser({ cards, players = [], base = "/album" }: { cards: 
       )}
 
       <div id="spiele" />
-      {groupBySeason(shown).map((g) => (
+      {groupBySeason(shown).map((g, gi) => (
         <section key={g.season} aria-labelledby={`s-${g.season}`}>
           <h2 id={`s-${g.season}`} className="section">
             {g.season}
           </h2>
           <div className="cards">
-            {g.items.map((c) => (
-              <Link key={c.id} href={`${base}/${c.id}`} className="card">
+            {g.items.map((c, i) => (
+              <Link key={c.id} href={`${base}/${c.id}`} className={base === "/album" && !needle && gi === 0 && i === 0 ? "card card-featured" : "card"}>
                 <div className="card-img">
                   {c.coverId ? (
                     // eslint-disable-next-line @next/next/no-img-element

@@ -14,9 +14,9 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  // immer hell, unabhängig von der Systemeinstellung
-  themeColor: "#ffffff",
-  colorScheme: "light",
+  // immer dunkel ("Dark Arena"), unabhängig von der Systemeinstellung
+  themeColor: "#090a0f",
+  colorScheme: "dark",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

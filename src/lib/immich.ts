@@ -170,6 +170,23 @@ async function photoIds(albums: Album[]): Promise<Set<string>> {
   return ids;
 }
 
+/**
+ * Favoriten (Herz in Immich) im Querformat aus Spielalben: Kandidaten für das Titelbild der Startseite.
+ * Fotos aus "_"-Alben oder "Weitere Fotos" kommen nie vor.
+ */
+export function getHeroPhotoIds(): Promise<string[]> {
+  return cached("hero", TTL, async () => {
+    const [favorites, visible] = await Promise.all([searchPhotos({ isFavorite: true, type: "IMAGE" }), getGamePhotoIds()]);
+    return favorites.filter((p) => visible.has(p.id) && p.width > p.height).map((p) => p.id);
+  });
+}
+
+/** Zufälliges Titelbild aus den Favoriten oder null */
+export async function pickHeroPhotoId(): Promise<string | null> {
+  const ids = await getHeroPhotoIds();
+  return ids.length ? ids[Math.floor(Math.random() * ids.length)] : null;
+}
+
 /** Fotos einer Person aus sichtbaren Spielalben, neueste zuerst */
 export function getPersonPhotos(id: string): Promise<Photo[]> {
   return cached(`person:${id}`, TTL, async () => {

@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { clearCache, getAlbumPhotos, getAlbums, getPeople, getPersonPhotos, isUuid } from "../src/lib/immich";
+import { clearCache, getAlbumPhotos, getHeroPhotoIds, getAlbums, getPeople, getPersonPhotos, isUuid } from "../src/lib/immich";
 
 const ok = (body: unknown) => Promise.resolve(new Response(JSON.stringify(body), { status: 200 }));
 
@@ -72,5 +72,17 @@ describe("immich", () => {
   it("isUuid", () => {
     expect(isUuid("3f2b8c1e-9d4a-4e6b-8a1c-0123456789ab")).toBe(true);
     expect(isUuid("../etc/passwd")).toBe(false);
+  });
+
+  it("Titelbild: nur Favoriten im Querformat aus Spielalben", async () => {
+    const asset = (id: string, w: number, h: number) => ({ id, type: "IMAGE", originalFileName: `${id}.JPG`, width: w, height: h, fileCreatedAt: "2026-01-01T00:00:00Z" });
+    vi.spyOn(globalThis, "fetch").mockImplementation((input, init) => {
+      const url = String(input);
+      if (url.endsWith("/albums")) return ok([{ id: "a1", albumName: "URE D1 vs X", albumThumbnailAssetId: "g", assetCount: 2, startDate: "2026-01-01T00:00:00Z" }]);
+      const body = JSON.parse(String(init?.body ?? "{}"));
+      const items = body.isFavorite ? [asset("quer", 30, 20), asset("hoch", 20, 30), asset("fremd", 30, 20)] : [asset("quer", 30, 20), asset("hoch", 20, 30)];
+      return ok({ assets: { items, nextPage: null } });
+    });
+    expect(await getHeroPhotoIds()).toEqual(["quer"]);
   });
 });

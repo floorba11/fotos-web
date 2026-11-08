@@ -3,7 +3,7 @@ import { PlayerBrowser } from "@/components/PlayerBrowser";
 import { getPeople } from "@/lib/immich";
 
 export const dynamic = "force-dynamic";
-export const metadata: Metadata = { title: "Spieler" };
+export const metadata: Metadata = { title: "Athleten" };
 
 export default async function Players() {
   const people = await getPeople();
@@ -14,7 +14,7 @@ export default async function Players() {
         <h1>Finde dich.</h1>
         <p className="lead">Klick auf dein Gesicht und sieh alle Fotos, auf denen du bist, aus allen Spielen.</p>
       </section>
-      {people.length ? <PlayerBrowser players={people} /> : <p className="empty">Noch keine Spieler benannt.</p>}
+      {people.length ? <PlayerBrowser players={people} /> : <p className="empty">Noch keine Athleten benannt.</p>}
     </>
   );
 }

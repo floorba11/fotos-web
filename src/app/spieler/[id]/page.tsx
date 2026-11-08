@@ -12,7 +12,7 @@ type Props = { params: Promise<{ id: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const person = await getPerson((await params).id).catch(() => null);
-  return { title: person?.name ?? "Spieler" };
+  return { title: person?.name ?? "Athlet" };
 }
 
 export default async function PlayerPage({ params }: Props) {
@@ -25,7 +25,7 @@ export default async function PlayerPage({ params }: Props) {
   return (
     <>
       <nav className="crumbs" aria-label="Zurück">
-        <Link href="/spieler">← Alle Spieler</Link>
+        <Link href="/spieler">← Alle Athleten</Link>
       </nav>
       <header className="profile">
         {/* grosses Wasserzeichen mit dem Nachnamen, rein dekorativ */}

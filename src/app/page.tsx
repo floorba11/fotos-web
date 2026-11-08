@@ -43,7 +43,7 @@ export default async function Home() {
               Nach Spiel
             </a>
             <Link className="btn btn-light" href="/spieler">
-              Nach Spieler
+              Nach Athleten
             </Link>
           </p>
           {albums.length > 0 && (
@@ -54,7 +54,7 @@ export default async function Home() {
               </li>
               <li>
                 <b>{players.length}</b>
-                <span>Spieler</span>
+                <span>Athleten</span>
               </li>
               <li>
                 <b>{photos}</b>

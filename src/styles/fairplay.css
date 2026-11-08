@@ -8,8 +8,8 @@
   gap: 1.25rem 2rem;
   margin: 2rem 0;
   padding: 1.25rem 1.5rem 1.25rem 1.75rem;
-  background: var(--surface);
-  border: 1px solid var(--line);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
   border-radius: 12px;
   overflow: hidden;
 }
@@ -28,9 +28,9 @@
   text-transform: uppercase;
   letter-spacing: 0.02em;
   font-size: clamp(1.15rem, 3vw, 1.5rem);
-  color: var(--text);
+  color: var(--text-primary);
 }
-.fp-text p { margin: 0 0 0.75rem; color: var(--muted); line-height: 1.5; }
+.fp-text p { margin: 0 0 0.75rem; color: var(--text-secondary); line-height: 1.5; }
 .fp-link { color: var(--accent); font-weight: 600; }
 .fp-link:hover { color: var(--accent-hover); }
 .fp-actions { display: flex; flex-direction: column; gap: 0.6rem; flex: 0 0 auto; }
@@ -61,12 +61,12 @@
   gap: 0.9rem;
   max-width: 32rem;
   padding: 0.75rem 1rem;
-  background: var(--surface);
-  color: var(--text);
-  border: 1px solid var(--line);
+  background: var(--bg-dark);
+  color: var(--text-on-accent);
+  border: 1px solid rgb(248 245 245 / 0.15);
   border-left: 4px solid var(--accent);
   border-radius: 10px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 10px 32px rgb(38 38 38 / 0.35);
   font-size: 0.95rem;
   animation: fp-toast-in 0.2s ease-out;
 }
@@ -75,13 +75,14 @@
   padding: 0.4rem 0.8rem;
   border: 0;
   border-radius: 999px;
-  background: var(--accent);
-  color: var(--accent-ink);
+  background: var(--text-on-accent);
+  color: var(--text-primary);
   font: inherit;
   font-weight: 600;
   cursor: pointer;
 }
-.fp-toast-btn:hover { background: var(--accent-hover); }
+.fp-toast-btn:hover { background: var(--bg-subtle); }
+.fp-toast-btn:focus-visible { outline-color: var(--text-on-accent); }
 @keyframes fp-toast-in {
   from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: none; }

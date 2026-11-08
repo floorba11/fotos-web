@@ -20,9 +20,9 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  // immer dunkel (Gameday-Look), unabhängig von der Systemeinstellung
-  themeColor: "#09090b",
-  colorScheme: "dark",
+  // immer hell (Maroon Mood), unabhängig von der Systemeinstellung
+  themeColor: "#f8f5f5",
+  colorScheme: "light",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

@@ -9,7 +9,7 @@
 .af-label {
   flex: none;
   font-size: 0.85rem;
-  color: var(--muted);
+  color: var(--text-secondary);
   white-space: nowrap;
 }
 .af-list {
@@ -33,8 +33,8 @@
   border: 0;
   border-radius: 50%;
   overflow: hidden;
-  background: var(--surface);
-  box-shadow: 0 0 0 2px var(--line);
+  background: var(--bg-surface);
+  box-shadow: 0 0 0 2px var(--border-color);
   cursor: pointer;
   scroll-snap-align: start;
   transition: box-shadow 0.15s;
@@ -58,7 +58,7 @@
 .af-count {
   flex: none;
   font-size: 0.85rem;
-  color: var(--text);
+  color: var(--text-primary);
   white-space: nowrap;
 }
 /* Schmale Bildschirme: Beschriftung und Zähler über der Avatar-Reihe */

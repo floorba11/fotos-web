@@ -10,6 +10,8 @@ set -a; . ./.env; set +a
 docker network inspect web >/dev/null 2>&1 || { echo "Netzwerk 'web' fehlt – zuerst das Portal in ~/unihockey starten"; exit 1; }
 docker ps --format '{{.Names}}' | grep -qx immich_server || echo "Hinweis: Immich (immich_server) läuft nicht – die Seite zeigt dann nur eine Fehlerseite."
 
+[ -d "${PORTRAITS_SOURCE:-/mnt/fotos/_Portraits}" ] || { echo "Porträt-Ordner fehlt: ${PORTRAITS_SOURCE:-/mnt/fotos/_Portraits} anlegen (Storage Box eingehängt?)"; exit 1; }
+
 docker compose up -d --remove-orphans
 
 # Caddy des Portals bedient die Domain und liest ~/unihockey/sites/*.caddy

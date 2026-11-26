@@ -70,7 +70,7 @@ npm run lint && npm run typecheck && npm test
 |---|---|
 | `src/lib/immich.ts` | Immich-API (Alben, Fotos, Personen), kleiner Zwischenspeicher (2 Min.) |
 | `src/lib/format.ts` | Albumnamen („Saison – Spiel") → Saison/Titel, Datum, Gruppierung |
-| `src/lib/portraits.ts` | Kaderporträts von uh-regio-entlebuch.ch (`public/portraits`), Zuordnung über den Namen in Immich |
+| `src/lib/portraits.ts` | Kaderporträts: Ordner `_Portraits` auf der Storage Box (`Vorname Nachname.jpg`), Startbestand `public/portraits`; Zuordnung über den Namen in Immich |
 | `src/lib/face.ts` | Gesichtsbild aus dem neusten Foto für alle ohne Kaderporträt |
 | `src/lib/limit.ts` | höchstens 3 gleichzeitige ZIP-Downloads |
 | `src/app/img/…`, `src/app/face/…`, `src/app/zip/…` | Bilder, Gesichter und ZIP-Archive aus Immich durchreichen |

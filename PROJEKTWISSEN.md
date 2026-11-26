@@ -120,6 +120,7 @@ Internet ──► Caddy (Portal, ~/unihockey, Netzwerk "web")
 | `Saison_26-27/URE_D1_vs_Wizards/` | „Saison_26-27 – URE_D1_vs_Wizards" | Startseite „Spiele", Gruppe „Saison 26-27" |
 | `weitere/Natur/Aletsch/` | „weitere – Natur – Aletsch" | Tab „Off-Court" (`/weitere`), Gruppe „Natur", Titel „Aletsch" |
 | `_Privat/Hochzeit_Muster/` | „_Privat – Hochzeit_Muster" | **nie** (Alben mit `_` am Anfang sind verborgen) |
+| `_Portraits/` | **keins**: in Immich unter Bibliothek → Ausschlussmuster `**/_Portraits/**` eintragen | Kaderporträts, nur über `/face/[id]` |
 | Dateien ohne Unterordner | kein Album | nie |
 
 Namenskonventionen im Spielordner, die die Website auswertet (`parseAlbumTitle`):
@@ -154,7 +155,7 @@ Namenskonventionen im Spielordner, die die Website auswertet (`parseAlbumTitle`)
 | `/weitere` | `app/weitere/page.tsx` | „Off-Court – Abseits vom Spielfeld." Alben aus `weitere/` |
 | `/weitere/[id]` | re-export der Albumseite | damit der Tab aktiv bleibt; ohne Personen-Filter |
 | `/img/[id]/[size]` | Route Handler | `thumbnail`, `preview`, `original` (mit `?download=1` als Anhang). **Nur Fotos aus sichtbaren Alben**, sonst 404 |
-| `/face/[id]` | Route Handler | Kaderporträt (302 auf `/portraits/…`), sonst Gesicht aus neustem sichtbaren Foto (sharp, 240×240), sonst SVG-Platzhalter. Nie das Immich-Personen-Thumbnail (könnte aus privatem Foto stammen) |
+| `/face/[id]` | Route Handler | Kaderporträt (Datei aus `_Portraits`, auf 240×240 zugeschnitten), sonst Gesicht aus neustem sichtbaren Foto (sharp, 240×240), sonst SVG-Platzhalter. Nie das Immich-Personen-Thumbnail (könnte aus privatem Foto stammen) |
 | `/zip/[kind]/[id]` | Route Handler | `kind` = `album` oder `spieler`; ZIP über Immich `/download/info` + `/download/archive`, gestreamt; max. **3 gleichzeitig**, sonst 503 mit `Retry-After: 60` |
 | `/robots.txt` | `app/robots.ts` | `Disallow: /` |
 
@@ -169,7 +170,7 @@ Fuss: Fairplay-Banner, Copyright, optional Kontaktzeile mit `CONTACT_EMAIL`.
 | `format.ts` | `parseAlbumName` (Saison/Titel, `weitere` fällt weg), `isOtherAlbum`, `formatDate`/`formatDateRange` (de-CH, Europe/Zurich, „18.–19. Oktober 2026"), `groupBySeason` („Weitere" zuletzt) |
 | `parseAlbumTitle.ts` | Wettbewerb, Teams, Ort, Tippfehler (siehe Abschnitt 4) |
 | `matchMetadata.ts` | Von Hand gepflegte Resultate pro Spiel (`score`), Schlüssel Album-UUID oder normalisierter Titel (`ure-d1-vs-wolhusen`). Zurzeit leer |
-| `portraits.ts` | Liste der Kaderporträts (`public/portraits/*.jpg`, von uh-regio-entlebuch.ch: Frauen I, Frauen II, Trainer) mit Aliassen; Zuordnung über Namens-Token (Umlaute → ae/oe/ue, Reihenfolge egal, eindeutig, min. 2 Teile) |
+| `portraits.ts` | Kaderporträts: Dateien `Vorname Nachname.jpg` im privaten Ordner `_Portraits` der Storage Box (Container: `/portraits`, `PORTRAITS_DIR`), dahinter der Startbestand `public/portraits` (von uh-regio-entlebuch.ch). Mehrere Namen: `Leandra Fischer = Leli Fischer.jpg`. Zuordnung über Namens-Token (Umlaute → ae/oe/ue, Reihenfolge egal, eindeutig, min. 2 Teile); Zuschnitt mit sharp |
 | `face.ts` | `faceCrop` (quadratisch, ~2,6 × Gesicht, leicht nach unten), `newestFace` (sucht in den 5 neusten Fotos, Cache 10 Min.) |
 | `limit.ts` | `createLimiter`, `guardStream` (gibt den ZIP-Slot bei Ende/Abbruch/Fehler frei) |
 | `name.ts` | `splitName` → Vorname(n) / Nachname |
@@ -240,7 +241,7 @@ Tests in `tests/`: `face`, `format`, `immich`, `limit`, `name`, `parseAlbumTitle
 3. album-sync legt innerhalb von 5 Minuten das Album an.
 4. Website zeigt es nach spätestens 2 Minuten Cache.
 5. Einmalig pro neuer Person in Immich unter *Personen* den Namen eintragen; danach ordnet Immich selbst zu.
-   Neues Kaderporträt? → JPG in `public/portraits/` + Eintrag in `src/lib/portraits.ts`.
+   Neues Kaderporträt? → Datei `Vorname Nachname.jpg` in den Ordner `_Portraits` der Storage Box legen (beliebige Grösse, wird zugeschnitten); nach spätestens 30 s aktiv, ohne Deploy.
 6. Optional Resultat in `src/lib/matchMetadata.ts` eintragen und deployen. Lieblingsbilder in Immich mit Herz markieren
    → Kandidaten für das Titelbild.
 

@@ -13,6 +13,16 @@ services:
       IMMICH_URL: http://immich-server:2283
       IMMICH_API_KEY: ${IMMICH_API_KEY:?IMMICH_API_KEY fehlt in .env}
       CONTACT_EMAIL: ${CONTACT_EMAIL:-}
+    volumes:
+      # Kaderporträts (Dateien "Vorname Nachname.jpg") im Ordner _Portraits der Storage Box, nur lesend.
+      # In Immich muss dieser Ordner unter Bibliothek → Ausschlussmuster stehen: **/_Portraits/**
+      # Fehlt er, startet der Container nicht, statt still ohne Porträts zu laufen.
+      - type: bind
+        source: ${PORTRAITS_SOURCE:-/mnt/fotos/_Portraits}
+        target: /portraits
+        read_only: true
+        bind:
+          create_host_path: false
     networks: [web]
     mem_limit: 256m
 

@@ -153,7 +153,7 @@ Namenskonventionen im Spielordner, die die Website auswertet (`parseAlbumTitle`)
 |---|---|---|
 | `/` | `app/page.tsx` | Hero mit zufälligem Titelbild (Immich-Favorit im Querformat aus Spielalben, sonst Cover des neuesten Spiels), Slogan „Vollgas auf dem Feld. Für immer im Kasten.", schwebende Suche, Match-Poster nach Saison |
 | `/album/[id]` | `app/album/[id]/page.tsx` | Kopf mit Saison, Wettbewerbs-Badge, Titel (`MatchTitle`), Datum, Anzahl, Ort; ZIP-Button; Filterleiste „In diesem Spiel markiert" (Gesichter); Galerie |
-| `/spieler` | `app/spieler/page.tsx` | „Athleten-Roster – Finde dich.": alle benannten, nicht ausgeblendeten Personen, Namenssuche |
+| `/spieler` | `app/spieler/page.tsx` | „Athleten-Roster – Finde dich.": alle benannten, nicht ausgeblendeten Personen nach Nachname sortiert, Namenssuche |
 | `/spieler/[id]` | `app/spieler/[id]/page.tsx` | Profil mit Nachname als Wasserzeichen, Porträt, „N Action-Shots", ZIP, alle Fotos neueste zuerst |
 | `/weitere` | `app/weitere/page.tsx` | „Off-Court – Abseits vom Spielfeld." Alben aus `weitere/` |
 | `/weitere/[id]` | re-export der Albumseite | damit der Tab aktiv bleibt; ohne Personen-Filter |
@@ -178,7 +178,7 @@ Fuss: Fairplay-Banner, Copyright, optional Kontaktzeile mit `CONTACT_EMAIL`.
 | `portraits.ts` | Kaderporträts: Dateien `Vorname Nachname.jpg` im privaten Ordner `_Portraits` der Storage Box (Container: `/portraits`, `PORTRAITS_DIR`), dahinter der Startbestand `public/portraits` (von uh-regio-entlebuch.ch). Mehrere Namen: `Leandra Fischer = Leli Fischer.jpg`. Zuordnung über Namens-Token (Umlaute → ae/oe/ue, Reihenfolge egal, eindeutig, min. 2 Teile); Zuschnitt mit sharp |
 | `face.ts` | `faceCrop` (quadratisch, ~2,6 × Gesicht, leicht nach unten), `newestFace` (sucht in den 5 neusten Fotos, Cache 10 Min.) |
 | `limit.ts` | `createLimiter`, `guardStream` (gibt den ZIP-Slot bei Ende/Abbruch/Fehler frei) |
-| `name.ts` | `splitName` → Vorname(n) / Nachname |
+| `name.ts` | `splitName` → Vorname(n) / Nachname (kleingeschriebene Zusätze wie von/van/de/di gehören zum Nachnamen: „Yannik von Gunten“ → „von Gunten“); `compareByLastName` sortiert nach Nachname, dann Vorname |
 | `stats.ts` | Zähler pro Album (`views`, `zips`, `photos`) in `STATS_FILE` (Standard `/data/stats.json`, Docker-Volume `stats`). Nur Zahlen, keine IPs/Cookies; Bots (User-Agent) zählen nicht. Schreibt alle 10 s und beim Beenden (atomar über `.tmp`) |
 | `toast.ts` | Mini-Toast-Eventsystem (`fotos:toast`), `copyText` mit Fallback |
 

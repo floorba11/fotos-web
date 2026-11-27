@@ -1,6 +1,7 @@
 import { parseAlbumName } from "@/lib/format";
 import { createLimiter, guardStream } from "@/lib/limit";
 import { getAlbum, getAlbumPhotos, getPerson, getPersonPhotos, immich, isUuid } from "@/lib/immich";
+import { count } from "@/lib/stats";
 
 export const dynamic = "force-dynamic";
 
@@ -9,7 +10,7 @@ const limiter = createLimiter(3);
 
 const slug = (s: string) => s.replace(/[^\w\-]+/g, "_").replace(/^_+|_+$/g, "") || "fotos";
 
-export async function GET(_request: Request, ctx: { params: Promise<{ kind: string; id: string }> }) {
+export async function GET(request: Request, ctx: { params: Promise<{ kind: string; id: string }> }) {
   const { kind, id } = await ctx.params;
   if (!isUuid(id) || (kind !== "album" && kind !== "spieler")) return new Response("Nicht gefunden", { status: 404 });
 
@@ -50,6 +51,7 @@ export async function GET(_request: Request, ctx: { params: Promise<{ kind: stri
       headers: { Accept: "*/*" },
     });
     if (!upstream.ok || !upstream.body) throw new Error(`download/archive ${upstream.status}`);
+    if (kind === "album") count(id, "zips", request);
 
     return new Response(guardStream(upstream.body, release), {
       headers: {

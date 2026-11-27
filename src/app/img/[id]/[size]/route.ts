@@ -1,4 +1,5 @@
-import { getVisiblePhotoIds, immich, isUuid } from "@/lib/immich";
+import { getAlbum, getAlbumPhotos, getVisiblePhotoIds, immich, isUuid } from "@/lib/immich";
+import { count } from "@/lib/stats";
 
 const PATHS: Record<string, (id: string) => string> = {
   thumbnail: (id) => `/assets/${id}/thumbnail?size=thumbnail`,
@@ -31,8 +32,17 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string;
   });
   const length = upstream.headers.get("content-length");
   if (length) headers.set("Content-Length", length);
-  if (new URL(request.url).searchParams.get("download") === "1") {
+  const params = new URL(request.url).searchParams;
+  if (params.get("download") === "1") {
     headers.set("Content-Disposition", `attachment; filename="${fileName(upstream, id)}"`);
+    const album = params.get("album");
+    // nur zählen, wenn das Foto wirklich in diesem Album liegt (Teilanfragen nicht doppelt)
+    if (size === "original" && album && isUuid(album) && !request.headers.get("range")) {
+      const inAlbum = await getAlbum(album)
+        .then(async (a) => !!a && (await getAlbumPhotos(album)).some((p) => p.id === id))
+        .catch(() => false);
+      if (inAlbum) count(album, "photos", request);
+    }
   }
   return new Response(upstream.body, { headers });
 }

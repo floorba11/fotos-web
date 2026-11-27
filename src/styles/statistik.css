@@ -1,0 +1,104 @@
+/* Statistik-Seite (/statistik, nur für Luc) */
+.st-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.75rem;
+  margin: 0 0 1.5rem;
+}
+.st-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 1rem 1.25rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+}
+.st-num {
+  font-family: var(--font-display), sans-serif;
+  font-size: 2.2rem;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--accent);
+}
+.st-label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+.st-sort {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 0.75rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+.st-sort a {
+  padding: 0.2rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  text-decoration: none;
+}
+.st-sort a.st-active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--text-on-accent);
+}
+.st-scroll {
+  overflow-x: auto;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-card);
+  margin-bottom: 2rem;
+}
+.st-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+.st-table th,
+.st-table td {
+  padding: 0.6rem 0.9rem;
+  border-bottom: 1px solid var(--border-color);
+  text-align: left;
+  vertical-align: baseline;
+}
+.st-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+.st-table th {
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+.st-table a {
+  color: var(--text-primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+.st-table a:hover {
+  color: var(--accent);
+}
+.st-season {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+.st-date {
+  white-space: nowrap;
+  color: var(--text-secondary);
+}
+.st-r {
+  text-align: right !important;
+  font-variant-numeric: tabular-nums;
+}
+.st-strong {
+  font-weight: 700;
+  color: var(--accent);
+}

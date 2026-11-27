@@ -5,7 +5,7 @@ import { DownloadLink } from "./DownloadLink";
 
 export type GalleryPhoto = { id: string; name: string; width: number; height: number };
 
-export function Gallery({ photos, label }: { photos: GalleryPhoto[]; label?: string }) {
+export function Gallery({ photos, label, albumId }: { photos: GalleryPhoto[]; label?: string; albumId?: string }) {
   const [open, setOpen] = useState<number | null>(null);
   const [touchX, setTouchX] = useState<number | null>(null);
 
@@ -86,7 +86,7 @@ export function Gallery({ photos, label }: { photos: GalleryPhoto[]; label?: str
               <span>
                 {open! + 1} / {photos.length}
               </span>
-              <DownloadLink href={`/img/${current.id}/original?download=1`} download>
+              <DownloadLink href={`/img/${current.id}/original?download=1${albumId ? `&album=${albumId}` : ""}`} download>
                 Original herunterladen
               </DownloadLink>
             </figcaption>

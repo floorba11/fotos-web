@@ -141,7 +141,9 @@ Namenskonventionen im Spielordner, die die Website auswertet (`parseAlbumTitle`)
 - **Next.js 16.4.2** (App Router, `output: "standalone"`), **React 19.3**, **TypeScript**, **sharp** (Gesichtsausschnitte),
   Node 24. Tests mit **Vitest 5**, Lint mit ESLint 9 (`eslint-config-next`).
 - Alle Seiten `force-dynamic` (Daten zur Laufzeit aus Immich, `CONTACT_EMAIL` zur Laufzeit).
-- Header `X-Robots-Tag: noindex, nofollow, noarchive` auf allen Pfaden, `robots.txt` sperrt alles, `<meta robots>`.
+- Header `X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex` auf allen Pfaden (auch Bilder, ZIPs) und `<meta robots>`.
+  `robots.txt` erlaubt das Abrufen absichtlich: bei `Disallow: /` sähe Google das noindex nie und könnte verlinkte
+  Adressen trotzdem als Treffer zeigen. Bereits indexierte Seiten: Google Search Console → Entfernen.
 - Schrift: Barlow Condensed (Google Fonts, `--font-display`) für Schlagzeilen, sonst System/Inter.
 
 ### Seiten und Routen
@@ -157,7 +159,7 @@ Namenskonventionen im Spielordner, die die Website auswertet (`parseAlbumTitle`)
 | `/img/[id]/[size]` | Route Handler | `thumbnail`, `preview`, `original` (mit `?download=1` als Anhang). **Nur Fotos aus sichtbaren Alben**, sonst 404 |
 | `/face/[id]` | Route Handler | Kaderporträt (Datei aus `_Portraits`, auf 240×240 zugeschnitten), sonst Gesicht aus neustem sichtbaren Foto (sharp, 240×240), sonst SVG-Platzhalter. Nie das Immich-Personen-Thumbnail (könnte aus privatem Foto stammen) |
 | `/zip/[kind]/[id]` | Route Handler | `kind` = `album` oder `spieler`; ZIP über Immich `/download/info` + `/download/archive`, gestreamt; max. **3 gleichzeitig**, sonst 503 mit `Retry-After: 60` |
-| `/robots.txt` | `app/robots.ts` | `Disallow: /` |
+| `/robots.txt` | `app/robots.ts` | `Allow: /` (damit Google das noindex sieht) |
 | `/statistik` | `app/statistik/page.tsx` | **Nur für Luc** (Passwort `STATS_PASSWORD`, Schutz in `src/proxy.ts`, ohne Passwort 404): Aufrufe, ZIP-Downloads und Einzelfoto-Downloads pro Album, sortierbar nach Datum/Aufrufen/Downloads |
 | `/api/stats/view` | Route Handler | Browser meldet einen Albumaufruf (`ViewBeacon`, einmal pro Tab via `sessionStorage`) |
 

@@ -37,18 +37,38 @@ describe("parseAlbumTitle", () => {
     expect(p.awayTeam).toBe("Wolhusen");
   });
 
-  it("Heimrunde und Runde 3 sind Meisterschaft", () => {
-    for (const t of ["Heimrunde", "Runde 3", "runde 12"]) {
+  it("Runde 3 ist Meisterschaft und fällt aus dem Titel", () => {
+    for (const t of ["Runde 3", "runde 12"]) {
       const p = parseAlbumTitle(`URE D1 ${t}`);
       expect(p.competition).toEqual({ label: "MEISTERSCHAFT", kind: "league" });
+      expect(p.tags).toEqual([{ label: "MEISTERSCHAFT", kind: "league" }]);
       expect(p.isCup).toBe(false);
       expect(p.isHighlight).toBe(false);
       expect(p.cleanTitle).toBe("URE D1");
     }
   });
 
-  it("kein Treffer: kein Wettbewerb", () => {
-    expect(parseAlbumTitle("URE D1 vs Wizards").competition).toBeNull();
+  it("Heimrunde bleibt im Namen und bekommt einen eigenen Tag", () => {
+    const p = parseAlbumTitle("URE D1 Heimrunde in Schüpfheim");
+    expect(p.cleanTitle).toBe("URE D1 Heimrunde in Schüpfheim");
+    expect(p.homeTeam).toBe("URE D1 Heimrunde");
+    expect(p.location).toBe("Schüpfheim");
+    expect(p.isHeimrunde).toBe(true);
+    expect(p.tags).toEqual([
+      { label: "MEISTERSCHAFT", kind: "league" },
+      { label: "HEIMRUNDE", kind: "home" },
+    ]);
+  });
+
+  it("Cup mit Heimrunde: Cup-Tag und Heimrunde-Tag", () => {
+    const p = parseAlbumTitle("URE D1 vs Wolhusen CUP 1 16 Heimrunde");
+    expect(p.tags.map((t) => t.label)).toEqual(["CUP 1/16-FINAL", "HEIMRUNDE"]);
+  });
+
+  it("ohne Kürzel: Meisterschaft", () => {
+    const p = parseAlbumTitle("URE D1 vs Wizards");
+    expect(p.competition).toEqual({ label: "MEISTERSCHAFT", kind: "league" });
+    expect(p.isHeimrunde).toBe(false);
   });
 
   it("trennt bei vs und vs.", () => {
@@ -73,8 +93,10 @@ describe("parseAlbumTitle", () => {
       homeTeam: "",
       awayTeam: null,
       location: null,
-      competition: null,
+      competition: { label: "MEISTERSCHAFT", kind: "league" },
+      tags: [{ label: "MEISTERSCHAFT", kind: "league" }],
       isCup: false,
+      isHeimrunde: false,
       isHighlight: false,
     });
   });

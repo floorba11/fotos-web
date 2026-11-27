@@ -257,3 +257,37 @@ export function getAlbumPeople(albumId: string): Promise<AlbumPerson[]> {
     return out.sort((a, b) => b.photoIds.length - a.photoIds.length || a.name.localeCompare(b.name, "de"));
   });
 }
+
+/** Kamera-, Objektiv- und Ortsangaben eines Fotos aus den EXIF-Daten (für die Statistik) */
+export type PhotoExif = {
+  id: string;
+  make: string | null;
+  model: string | null;
+  lens: string | null;
+  city: string | null;
+  country: string | null;
+};
+
+type RawExifAsset = RawAsset & {
+  exifInfo?: { make?: string | null; model?: string | null; lensModel?: string | null; city?: string | null; country?: string | null } | null;
+};
+
+/** EXIF der Fotos eines Albums; 10 Minuten zwischengespeichert, weil das bei vielen Fotos etwas dauert */
+export function getAlbumExif(id: string): Promise<PhotoExif[]> {
+  return cached(`exif:${id}`, 10 * 60 * 1000, async () => {
+    const out: PhotoExif[] = [];
+    for (let page = 1; page <= 100; page++) {
+      const res = await json<{ assets: { items: RawExifAsset[]; nextPage: string | null } }>("/search/metadata", {
+        method: "POST",
+        body: JSON.stringify({ albumIds: [id], withExif: true, page, size: 1000 }),
+      });
+      for (const a of res.assets.items) {
+        if (a.type !== "IMAGE") continue;
+        const e = a.exifInfo ?? {};
+        out.push({ id: a.id, make: e.make ?? null, model: e.model ?? null, lens: e.lensModel ?? null, city: e.city ?? null, country: e.country ?? null });
+      }
+      if (!res.assets.nextPage) break;
+    }
+    return out;
+  });
+}

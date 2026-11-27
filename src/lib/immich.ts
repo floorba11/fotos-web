@@ -1,4 +1,5 @@
 import { isOtherAlbum } from "./format";
+import { compareByLastName } from "./name";
 
 // Zugriff auf die Immich-Schnittstelle (nur auf dem Server; der API-Schlüssel gelangt nie in den Browser).
 // Benötigte Berechtigungen des Schlüssels: album.read, asset.read, asset.view, asset.download, person.read
@@ -221,7 +222,7 @@ export function getPeople(): Promise<Person[]> {
       for (const p of res.people) if (p.name.trim() && !p.isHidden) out.push({ id: p.id, name: p.name.trim() });
       if (!res.hasNextPage) break;
     }
-    return out.sort((a, b) => a.name.localeCompare(b.name, "de"));
+    return out.sort((a, b) => compareByLastName(a.name, b.name));
   });
 }
 

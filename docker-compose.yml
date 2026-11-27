@@ -13,6 +13,8 @@ services:
       IMMICH_URL: http://immich-server:2283
       IMMICH_API_KEY: ${IMMICH_API_KEY:?IMMICH_API_KEY fehlt in .env}
       CONTACT_EMAIL: ${CONTACT_EMAIL:-}
+      # Passwort für /statistik (Aufrufe und Downloads pro Album); leer = Seite abgeschaltet
+      STATS_PASSWORD: ${STATS_PASSWORD:-}
     volumes:
       # Kaderporträts (Dateien "Vorname Nachname.jpg") im Ordner _Portraits der Storage Box, nur lesend.
       # In Immich muss dieser Ordner unter Bibliothek → Ausschlussmuster stehen: **/_Portraits/**
@@ -23,8 +25,13 @@ services:
         read_only: true
         bind:
           create_host_path: false
+      # Zähler für Aufrufe und Downloads pro Album (nur Zahlen, keine Personendaten); bleibt bei Updates erhalten
+      - stats:/data
     networks: [web]
     mem_limit: 256m
+
+volumes:
+  stats:
 
 networks:
   web:

@@ -158,6 +158,8 @@ Namenskonventionen im Spielordner, die die Website auswertet (`parseAlbumTitle`)
 | `/face/[id]` | Route Handler | Kaderporträt (Datei aus `_Portraits`, auf 240×240 zugeschnitten), sonst Gesicht aus neustem sichtbaren Foto (sharp, 240×240), sonst SVG-Platzhalter. Nie das Immich-Personen-Thumbnail (könnte aus privatem Foto stammen) |
 | `/zip/[kind]/[id]` | Route Handler | `kind` = `album` oder `spieler`; ZIP über Immich `/download/info` + `/download/archive`, gestreamt; max. **3 gleichzeitig**, sonst 503 mit `Retry-After: 60` |
 | `/robots.txt` | `app/robots.ts` | `Disallow: /` |
+| `/statistik` | `app/statistik/page.tsx` | **Nur für Luc** (Passwort `STATS_PASSWORD`, Schutz in `src/proxy.ts`, ohne Passwort 404): Aufrufe, ZIP-Downloads und Einzelfoto-Downloads pro Album, sortierbar nach Datum/Aufrufen/Downloads |
+| `/api/stats/view` | Route Handler | Browser meldet einen Albumaufruf (`ViewBeacon`, einmal pro Tab via `sessionStorage`) |
 
 Navigation: **Spiele** · **Athleten** (früher „Spieler"; URL bleibt `/spieler`) · **Off-Court**.
 Fuss: Fairplay-Banner, Copyright, optional Kontaktzeile mit `CONTACT_EMAIL`.
@@ -174,6 +176,7 @@ Fuss: Fairplay-Banner, Copyright, optional Kontaktzeile mit `CONTACT_EMAIL`.
 | `face.ts` | `faceCrop` (quadratisch, ~2,6 × Gesicht, leicht nach unten), `newestFace` (sucht in den 5 neusten Fotos, Cache 10 Min.) |
 | `limit.ts` | `createLimiter`, `guardStream` (gibt den ZIP-Slot bei Ende/Abbruch/Fehler frei) |
 | `name.ts` | `splitName` → Vorname(n) / Nachname |
+| `stats.ts` | Zähler pro Album (`views`, `zips`, `photos`) in `STATS_FILE` (Standard `/data/stats.json`, Docker-Volume `stats`). Nur Zahlen, keine IPs/Cookies; Bots (User-Agent) zählen nicht. Schreibt alle 10 s und beim Beenden (atomar über `.tmp`) |
 | `toast.ts` | Mini-Toast-Eventsystem (`fotos:toast`), `copyText` mit Fallback |
 
 ### Komponenten (`src/components`)
@@ -213,7 +216,8 @@ Pflicht", Buttons kopieren „@floorba11" bzw. „Foto: Luc Maradan"), `CopyButt
 
 - `docker-compose.yml`: Dienst `fotos-web`, Container `fotos_web` (bewusst nicht `web`, Namenskonflikt im Netzwerk),
   Image `ghcr.io/floorba11/fotos-web:latest`, 256 MB RAM, Netzwerk `web`.
-- `.env` (`~/fotos-web/.env`): `DOMAIN`, `IMMICH_API_KEY`, `CONTACT_EMAIL` (optional).
+- `.env` (`~/fotos-web/.env`): `DOMAIN`, `IMMICH_API_KEY`, `CONTACT_EMAIL` (optional), `STATS_PASSWORD` (optional, für `/statistik`).
+- Volume `fotos-web_stats` → `/data`: Statistik-Zähler, bleiben bei Deploys erhalten.
 - `deploy.sh`: startet, schreibt `fotos-web.caddy` (zstd/gzip, HSTS, `flush_interval -1` für ZIP-Streaming), Caddy-Reload.
 - `Dockerfile`: zweistufig, `node:24-bookworm-slim`, Standalone-Output, läuft als `node` auf Port 3000.
 - **CI/CD** (`.github/workflows/deploy.yml`): Push auf `main` → Job `test` (`npm ci`, lint, typecheck, test) → Job
@@ -229,7 +233,7 @@ IMMICH_URL=https://immich.<domain> IMMICH_API_KEY=… npm run dev
 npm run lint && npm run typecheck && npm test
 ```
 
-Tests in `tests/`: `face`, `format`, `immich`, `limit`, `name`, `parseAlbumTitle`, `portraits`, `toast`.
+Tests in `tests/`: `face`, `format`, `immich`, `limit`, `name`, `parseAlbumTitle`, `portraits`, `stats`, `toast`.
 
 ---
 
@@ -276,6 +280,14 @@ Tests in `tests/`: `face`, `format`, `immich`, `limit`, `name`, `parseAlbumTitle
 3. album-sync 15 → 5 Minuten (#1); HSTS (#2); Cloudflare-Doku (#3)
 
 ---
+
+### Statistik: was genau gezählt wird
+
+- **Aufrufe**: Albumseite geöffnet (per JavaScript gemeldet, einmal pro Browser-Tab; Link-Vorabladen und Bots ohne JS zählen nicht).
+- **ZIP**: „Alle herunterladen (ZIP)" eines Albums gestartet (Spieler-ZIPs zählen nicht).
+- **Einzelfotos**: Original-Download aus der Lightbox einer Albumseite (`?album=<id>`, nur wenn das Foto im Album liegt).
+  Downloads von Spielerseiten zählen keinem Album.
+- Zählung begann mit dem Deploy dieser Funktion (Nov. 2026); frühere Zahlen gibt es nicht.
 
 ## 9. Offene Punkte / Ideen
 

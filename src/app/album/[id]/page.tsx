@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { AlbumGallery } from "@/components/AlbumGallery";
 import { DownloadLink } from "@/components/DownloadLink";
 import { MatchTitle } from "@/components/MatchTitle";
+import { ViewBeacon } from "@/components/ViewBeacon";
 import { formatDateRange, isOtherAlbum, parseAlbumName } from "@/lib/format";
 import { getAlbum, getAlbumPeople, getAlbumPhotos } from "@/lib/immich";
 import { parseAlbumTitle } from "@/lib/parseAlbumTitle";
@@ -53,7 +54,8 @@ export default async function AlbumPage({ params }: Props) {
           Alle herunterladen (ZIP)
         </DownloadLink>
       </header>
-      <AlbumGallery photos={photos} people={people} label={parsed.cleanTitle || title} />
+      <AlbumGallery photos={photos} people={people} label={parsed.cleanTitle || title} albumId={id} />
+      <ViewBeacon albumId={id} />
     </>
   );
 }

@@ -7,7 +7,18 @@ import "@/styles/album-filter.css";
 type AlbumPerson = { id: string; name: string; photoIds: string[] };
 
 /** Galerie mit Filterleiste: Klick auf eine markierte Person zeigt nur ihre Fotos, nochmal klicken hebt den Filter auf */
-export function AlbumGallery({ photos, people, label }: { photos: GalleryPhoto[]; people: AlbumPerson[]; label?: string }) {
+export function AlbumGallery({
+  photos,
+  people,
+  label,
+  albumId,
+}: {
+  photos: GalleryPhoto[];
+  people: AlbumPerson[];
+  label?: string;
+  /** damit Einzel-Downloads dem Album zugerechnet werden (Statistik) */
+  albumId?: string;
+}) {
   const [filterId, setFilterId] = useState<string | null>(null);
 
   const shown = useMemo(() => {
@@ -45,7 +56,7 @@ export function AlbumGallery({ photos, people, label }: { photos: GalleryPhoto[]
           )}
         </div>
       )}
-      <Gallery key={filterId ?? "alle"} photos={shown} label={label} />
+      <Gallery key={filterId ?? "alle"} photos={shown} label={label} albumId={albumId} />
     </>
   );
 }

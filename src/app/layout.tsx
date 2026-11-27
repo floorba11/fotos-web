@@ -16,7 +16,14 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: { default: "floorba11 · Luc Maradan Fotografie", template: "%s · floorba11 Fotografie" },
   description: "Spielfotos in voller Auflösung",
-  robots: { index: false, follow: false, noarchive: true },
+  robots: {
+    index: false,
+    follow: false,
+    noarchive: true,
+    nosnippet: true,
+    noimageindex: true,
+    googleBot: { index: false, follow: false, noimageindex: true },
+  },
 };
 
 export const viewport: Viewport = {

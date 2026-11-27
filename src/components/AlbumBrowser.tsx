@@ -51,7 +51,7 @@ export function AlbumBrowser({ cards, base = "/album" }: { cards: AlbumCard[]; b
                   <div className="poster-shade" />
                   <div className="poster-top">
                     {m?.tags.map((t) => (
-                      <span key={t.label} className={t.kind === "cup" ? "badge badge-cup" : "badge badge-glass"}>
+                      <span key={t.label} className={`badge badge-${t.kind === "cup" ? "cup" : t.kind === "home" ? "home" : "glass"}`}>
                         {t.label}
                       </span>
                     ))}

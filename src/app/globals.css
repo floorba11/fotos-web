@@ -474,11 +474,19 @@ h1 {
   color: var(--text-on-accent);
 }
 
+/* Meisterschaft: dunkel hinterlegt, damit es auf hellen Fotos und auf der hellen Albumseite lesbar bleibt */
 .badge-glass {
-  background: rgb(248 245 245 / 0.16);
-  border: 1px solid rgb(248 245 245 / 0.3);
+  background: rgb(38 38 38 / 0.72);
+  border: 1px solid rgb(248 245 245 / 0.25);
   backdrop-filter: blur(8px);
   color: var(--text-on-accent);
+}
+
+/* Heimrunde: hell mit Maroon-Schrift, klar unterscheidbar von Cup (Maroon) und Meisterschaft (dunkel) */
+.badge-home {
+  background: var(--text-on-accent);
+  border: 1px solid var(--border-accent);
+  color: var(--accent);
 }
 
 .badge-score {
@@ -741,6 +749,7 @@ h1 {
 .head-badges {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 6px;
   margin-bottom: 10px;
 }

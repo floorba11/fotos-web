@@ -40,7 +40,7 @@ export default async function AlbumPage({ params }: Props) {
             {season && <p className="eyebrow">{season}</p>}
             {!other &&
               parsed.tags.map((t) => (
-                <span key={t.label} className={t.kind === "cup" ? "badge badge-cup" : "badge badge-glass"}>
+                <span key={t.label} className={`badge badge-${t.kind === "cup" ? "cup" : t.kind === "home" ? "home" : "glass"}`}>
                   {t.label}
                 </span>
               ))}

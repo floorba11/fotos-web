@@ -21,7 +21,8 @@ Besucher → Caddy (Portal, ~/unihockey) → fotos_web:3000 → Immich-API (immi
 
 Die Website ist **öffentlich**, ohne Anmeldung. Wer die Adresse kennt, sieht alle Alben und alle Spielerseiten samt Gesichtern.
 
-- Suchmaschinen sind ausgesperrt (`robots.txt`, `X-Robots-Tag`, `<meta robots>`), das ist aber nur eine Bitte.
+- Suchmaschinen sollen nichts aufnehmen (`X-Robots-Tag` und `<meta robots>` mit `noindex`). `robots.txt` erlaubt das
+  Abrufen absichtlich, sonst sieht Google das `noindex` nie. Seriöse Suchmaschinen halten sich daran, es ist aber kein Zugriffsschutz.
 - **Einwilligung** der Spieler einholen, bei Minderjährigen der Eltern. Gesichtserkennung verarbeitet biometrische Daten.
 - Wer nicht erscheinen soll: in Immich die Person **ausblenden** (verschwindet aus `/spieler`) und die Fotos aus dem Album
   nehmen.

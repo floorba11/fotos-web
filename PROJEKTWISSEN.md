@@ -129,7 +129,8 @@ Namenskonventionen im Spielordner, die die Website auswertet (`parseAlbumTitle`)
 - `… in Ort` → Ort (letztes „ in ").
 - `CUP`, optional mit Runde `1 16` / `1/16` (64/32/16/8/4/2) oder Feldart `GF`/`KF` → Badge „CUP 1/16-FINAL",
   „CUP VIERTELFINAL" (4), „CUP HALBFINAL" (2), „CUP GROSSFELD", „CUP KLEINFELD". Cup-Spiele werden hervorgehoben.
-- `Heimrunde` oder `Runde N` → Badge „MEISTERSCHAFT".
+- Ohne Cup-Kürzel ist jedes Spiel **Meisterschaft** (Badge „MEISTERSCHAFT"). `Runde N` fällt aus dem Titel.
+- `Heimrunde` **bleibt im Titel** und ergibt zusätzlich den Badge „HEIMRUNDE" (auch zusammen mit Cup).
 - `_` wird zu Leerzeichen. Bekannte Tippfehler werden korrigiert (`TYPO_FIXES`, z.B. „Wohusen" → „Wolhusen").
 
 ---
@@ -160,7 +161,7 @@ Namenskonventionen im Spielordner, die die Website auswertet (`parseAlbumTitle`)
 | `/face/[id]` | Route Handler | Kaderporträt (Datei aus `_Portraits`, auf 240×240 zugeschnitten), sonst Gesicht aus neustem sichtbaren Foto (sharp, 240×240), sonst SVG-Platzhalter. Nie das Immich-Personen-Thumbnail (könnte aus privatem Foto stammen) |
 | `/zip/[kind]/[id]` | Route Handler | `kind` = `album` oder `spieler`; ZIP über Immich `/download/info` + `/download/archive`, gestreamt; max. **3 gleichzeitig**, sonst 503 mit `Retry-After: 60` |
 | `/robots.txt` | `app/robots.ts` | `Allow: /` (damit Google das noindex sieht) |
-| `/statistik` | `app/statistik/page.tsx` | **Nur für Luc** (Passwort `STATS_PASSWORD`, Schutz in `src/proxy.ts`, ohne Passwort 404): Aufrufe, ZIP-Downloads und Einzelfoto-Downloads pro Album, sortierbar nach Datum/Aufrufen/Downloads |
+| `/statistik` | `app/statistik/page.tsx` | **Nur für Luc** (Passwort `STATS_PASSWORD`, Schutz in `src/proxy.ts`, ohne Passwort 404): Aufrufe, ZIP-Downloads und Einzelfoto-Downloads pro Album (sortierbar); Foto-Übersicht (Anzahl, Kameras, Objektive, Kamera+Objektiv, Orte aus EXIF via `getAlbumExif`/`photoStats.ts`, Ort sonst Spielort aus Albumname); Auswertung nach Tags |
 | `/api/stats/view` | Route Handler | Browser meldet einen Albumaufruf (`ViewBeacon`, einmal pro Tab via `sessionStorage`) |
 
 Navigation: **Spiele** · **Athleten** (früher „Spieler"; URL bleibt `/spieler`) · **Off-Court**.

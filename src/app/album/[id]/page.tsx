@@ -38,7 +38,12 @@ export default async function AlbumPage({ params }: Props) {
         <div>
           <div className="head-badges">
             {season && <p className="eyebrow">{season}</p>}
-            {!other && parsed.competition && <span className={parsed.isCup ? "badge badge-cup" : "badge badge-glass"}>{parsed.competition.label}</span>}
+            {!other &&
+              parsed.tags.map((t) => (
+                <span key={t.label} className={t.kind === "cup" ? "badge badge-cup" : "badge badge-glass"}>
+                  {t.label}
+                </span>
+              ))}
           </div>
           <h1 className="h-album">
             <MatchTitle title={title} />

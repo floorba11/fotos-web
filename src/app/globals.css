@@ -452,9 +452,10 @@ h1 {
   position: absolute;
   inset: 12px 12px auto;
   display: flex;
+  flex-wrap: wrap;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 8px;
+  gap: 6px;
 }
 
 .badge {
